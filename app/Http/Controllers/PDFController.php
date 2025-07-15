@@ -40,7 +40,7 @@ class PDFController extends Controller
     {
         $data = Booking::findOrFail($id);
         $no_telp = $data->noTelpPIC;
-        $token = 'h4HE!u#hhpf+9Ywbz1Pb';
+        $token = 'LWk3d6eTgBZurFgZdKyu';
 
         // Path to your generated PDF invoice
         // $pdfPath = public_path('invoice.invoice.pdf');

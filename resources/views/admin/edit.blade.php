@@ -20,7 +20,7 @@
         <h5 class="fw-bold m-3">Isi Data Diri Booking</h5>
         <div class="row justify-content-center border rounded p-4 m-3">
             <div class="col me-4">
-                <form method="GET" action="{{ route('admin.bookingUpdate',['id' => $data->id]) }}">
+                <form method="POST" action="{{ route('admin.bookingUpdate',['id' => $data->id]) }}">
                     <div class="mb-3">
                         <label for="tanggal-booking" class="form-label">Tanggal Visitor</label>
                         <input type="date" class="form-control" name="tanggal" id="tanggal-booking" placeholder="Masukan tanggal YYYY-MM-DD" value="{{ $data->tanggal }}">

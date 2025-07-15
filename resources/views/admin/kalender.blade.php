@@ -537,7 +537,8 @@
 
 @section('scripts')
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.min.js"></script>
+
 <script src="/js/kalender.js"></script>
 <script type="text/javascript" src="/js/landingpage.js"></script>
 <script src="/js/slideForm.js" ></script>

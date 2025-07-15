@@ -31,4 +31,12 @@ class Booking extends Model
     {
         return $this->belongsTo(Guide::class, 'guide_id');
     }
+    public function pemasukan()
+    {
+        return $this->hasMany(Pemasukan::class, 'booking_id');
+    }
+    public function pengeluaran()
+    {
+        return $this->hasMany(Pengeluaran::class, 'booking_id');
+    }
 }

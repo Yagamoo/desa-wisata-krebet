@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Keuangan;
+use App\Models\Pemasukan;
 use App\Models\StudyBanding;
 use Illuminate\Http\Request;
 use App\Models\Batik;
@@ -225,13 +227,47 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // dd($request);
         if ($request->status) {
             $booking = Booking::findOrFail($id);
-            $booking->status = $request->input('status');
+            if ($request->pembayaran == 'dp') {
+                $booking->status = 'ACC - DP';
+            } else if ($request->pembayaran == 'penuh') {
+                $booking->status = 'ACC - Lunas';
+            }
+
             $booking->save();
 
+            // Jika status == "Sudah ACC", buat pemasukan
+            if ($booking->status = 'ACC - DP' || $booking->status = 'ACC - Lunas') {
+                // Cek apakah sudah ada pemasukan untuk booking ini agar tidak dobel
+                $existing = Keuangan::where('booking_id', $booking->id)->first();
+                if (!$existing) {
+                    $jumlah = str_replace('.', '', $request->jumlah); // hilangkan titik
+                    $jumlah = preg_replace('/\D/', '', $jumlah); // jaga-jaga: hilangkan non-digit
+
+                    $filePath = null;
+
+                    if ($request->hasFile('bukti_pembayaran')) {
+                        $file = $request->file('bukti_pembayaran');
+                        $filePath = $file->store('bukti_pembayaran', 'public'); // simpan di storage/app/public/bukti_pembayaran
+                    }
+
+
+                    Keuangan::create([
+                        'booking_id' => $booking->id,
+                        'keterangan' => 'Pemasukan dari Booking #' . $booking->id,
+                        'tanggal' => now(),
+                        'jenis' => 'pemasukan',
+                        'type_pembayaran' => $request->pembayaran,
+                        'jumlah' => $jumlah,
+                        'bukti' => $filePath,
+                    ]);
+                }
+            }
+
             return response()->json(['success' => true]);
-        }else{
+        } else {
             if ($request->kesenianBelajar == "1.belajar") {
                 list($kesenianID, $ketKesenian) = explode('.', $request->kesenianPementasan);
             } else if ($request->kesenianPementasan == "1.pementasan") {
@@ -274,7 +310,7 @@ class AdminController extends Controller
             return redirect()->route('admin.booking');
         }
 
-        
+
     }
 
     /**
@@ -336,8 +372,13 @@ class AdminController extends Controller
     {
 
         if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
+            $user = Auth::user();
 
-            return redirect()->route('admin.dashboard')->with('success', 'Anda berhasil login!');
+            if ($user->hasRole('Sekretaris')) {
+                return redirect()->route('admin.dashboard')->with('success', 'Anda berhasil login!');
+            } elseif ($user->hasRole(roles: 'Bendahara')) {
+                return redirect()->route('admin.keuangan.index')->with('success', 'Anda berhasil login!');
+            }
         } else {
             return back()->with('error', 'Periksa Kembali Username atau Password Anda!');
         }
