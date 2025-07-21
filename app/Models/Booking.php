@@ -31,12 +31,14 @@ class Booking extends Model
     {
         return $this->belongsTo(Guide::class, 'guide_id');
     }
-    public function pemasukan()
+    public function keuangan()
     {
-        return $this->hasMany(Pemasukan::class, 'booking_id');
+        return $this->hasMany(Keuangan::class, 'booking_id');
     }
-    public function pengeluaran()
+
+    public function getLatestStatusKeuanganAttribute()
     {
-        return $this->hasMany(Pengeluaran::class, 'booking_id');
+        return $this->keuangan->firstWhere('tipe_pembayaran', 'penuh')
+            ?? $this->keuangan->firstWhere('tipe_pembayaran', 'dp');
     }
 }

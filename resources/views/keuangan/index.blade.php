@@ -7,7 +7,6 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-
 @endsection
 
 @section('menu')
@@ -49,7 +48,6 @@
                     </select>
                 </div>
             </form>
-
         </div>
 
         <div class="row g-3">

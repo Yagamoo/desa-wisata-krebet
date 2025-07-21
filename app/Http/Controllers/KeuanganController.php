@@ -104,14 +104,39 @@ class KeuanganController extends Controller
 
 
 
-    public function pemasukan()
+    public function pemasukan(Request $request)
     {
-        $today = Carbon::today('Asia/Jakarta')->format('Y-m-d');
-        $data = Keuangan::where('jenis', 'pemasukan')->orderBy('tanggal', 'asc')->get();
-        $pemasukan = $data->where('jenis', 'pemasukan')->sum('jumlah');
+        $filter = $request->get('filter', 'bulanan'); // default = bulanan
+        $today = Carbon::today('Asia/Jakarta');
+
+        // Mulai query
+        $query = Keuangan::where('jenis', 'pemasukan');
+
+        // Terapkan filter tanggal
+        switch ($filter) {
+            case 'harian':
+                $query->whereDate('tanggal', $today);
+                break;
+            case 'mingguan':
+                $startOfWeek = $today->copy()->startOfWeek();
+                $endOfWeek = $today->copy()->endOfWeek();
+                $query->whereBetween('tanggal', [$startOfWeek, $endOfWeek]);
+                break;
+            case 'bulanan':
+                $query->whereMonth('tanggal', $today->month)
+                    ->whereYear('tanggal', $today->year);
+                break;
+            case 'tahunan':
+                $query->whereYear('tanggal', $today->year);
+                break;
+        }
+
+        $data = $query->orderBy('tanggal', 'asc')->get();
+        $pemasukan = $data->sum('jumlah');
 
         return view('keuangan.pemasukan.index', compact('data', 'pemasukan'));
     }
+
 
     public function createPemasukan()
     {
@@ -168,11 +193,35 @@ class KeuanganController extends Controller
     }
 
     // Pengeluaran
-    public function pengeluaran()
+    public function pengeluaran(Request $request)
     {
-        $today = Carbon::today('Asia/Jakarta')->format('Y-m-d');
-        $data = Keuangan::where('jenis', 'pengeluaran')->orderBy('tanggal', 'asc')->get();
-        $pengeluaran = $data->where('jenis', 'pengeluaran')->sum('jumlah');
+        $filter = $request->get('filter', 'bulanan'); // default = bulanan
+        $today = Carbon::today('Asia/Jakarta');
+
+        // Mulai query
+        $query = Keuangan::where('jenis', 'pengeluaran');
+
+        // Terapkan filter tanggal
+        switch ($filter) {
+            case 'harian':
+                $query->whereDate('tanggal', $today);
+                break;
+            case 'mingguan':
+                $startOfWeek = $today->copy()->startOfWeek();
+                $endOfWeek = $today->copy()->endOfWeek();
+                $query->whereBetween('tanggal', [$startOfWeek, $endOfWeek]);
+                break;
+            case 'bulanan':
+                $query->whereMonth('tanggal', $today->month)
+                    ->whereYear('tanggal', $today->year);
+                break;
+            case 'tahunan':
+                $query->whereYear('tanggal', $today->year);
+                break;
+        }
+
+        $data = $query->orderBy('tanggal', 'asc')->get();
+        $pengeluaran = $data->sum('jumlah');
 
         return view('keuangan.pengeluaran.index', compact('data', 'pengeluaran'));
     }

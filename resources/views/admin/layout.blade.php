@@ -89,7 +89,7 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
     @yield('scripts')
-    <script>
+    {{-- <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
@@ -97,7 +97,7 @@
                     .catch(error => console.log('SW registration failed'));
             });
         }
-    </script>
+    </script> --}}
 
 </body>
 

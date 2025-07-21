@@ -259,14 +259,14 @@ class AdminController extends Controller
                         'keterangan' => 'Pemasukan dari Booking #' . $booking->id,
                         'tanggal' => now(),
                         'jenis' => 'pemasukan',
-                        'type_pembayaran' => $request->pembayaran,
+                        'tipe_pembayaran' => $request->pembayaran,
                         'jumlah' => $jumlah,
                         'bukti' => $filePath,
                     ]);
                 }
             }
 
-            return response()->json(['success' => true]);
+            // return response()->json(['success' => true]);
         } else {
             if ($request->kesenianBelajar == "1.belajar") {
                 list($kesenianID, $ketKesenian) = explode('.', $request->kesenianPementasan);
@@ -307,10 +307,8 @@ class AdminController extends Controller
                 'guide_id' => $request->guide,
                 'status' => $request->statusData,
             ]);
-            return redirect()->route('admin.booking');
         }
-
-
+        return redirect()->route('admin.booking');
     }
 
     /**

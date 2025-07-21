@@ -34,14 +34,20 @@
     </div>
     <div class="card p-3 m-3">
         <div class="row mb-3">
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <select class="form-select" name="filter-waktu">
-                    <option value="harian" selected>Harian</option>
-                    <option value="mingguan">Mingguan</option>
-                    <option value="bulanan">Bulanan</option>
-                    <option value="tahunan">Tahunan</option>
-                </select>
-            </div>
+            <form method="GET" action="{{ route('admin.keuangan.pengeluaran') }}">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <select class="form-select" name="filter" onchange="this.form.submit()">
+                        <option value="harian" {{ request('filter', 'bulanan') == 'harian' ? 'selected' : '' }}>Harian
+                        </option>
+                        <option value="mingguan" {{ request('filter', 'bulanan') == 'mingguan' ? 'selected' : '' }}>Mingguan
+                        </option>
+                        <option value="bulanan" {{ request('filter', 'bulanan') == 'bulanan' ? 'selected' : '' }}>Bulanan
+                        </option>
+                        <option value="tahunan" {{ request('filter', 'bulanan') == 'tahunan' ? 'selected' : '' }}>Tahunan
+                        </option>
+                    </select>
+                </div>
+            </form>
         </div>
 
         <div class="row g-3">

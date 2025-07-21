@@ -16,11 +16,13 @@ class GuideSeeder extends Seeder
         DB::table('guides')->insert([
             [
                 'name' => 'Guide Satu',
-                'no_telp' => '08123456789'
+                'no_telp' => '08123456789',
+                'user_id' => 3
             ],
             [
                 'name' => 'Guide Dua',
-                'no_telp' => '08987654321'
+                'no_telp' => '08987654321',
+                'user_id' => 4
             ],
         ]);
     }
