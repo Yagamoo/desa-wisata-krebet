@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\BookingItemNego;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,68 +17,44 @@ class PDFController extends Controller
     public function invoice($id)
     {
         $data = Booking::findOrFail($id);
-        if ($data->paket->ketKesenian == 'pementasan') {
-            $tagihanKesenian = 150000;
-        } else {
-            $tagihanKesenian = 40000;
+        $bookingItems = BookingItemNego::where('booking_id', $id)->get();
+
+        // tagihan kesenian tetap disiapkan kalau dipakai di view
+        $tagihanKesenian = $data->paket->ketKesenian == 'pementasan' ? 150000 : 40000;
+
+        // total
+        $totalTagihan = 0;
+        foreach ($bookingItems as $item) {
+            $harga = $item->harga_nego > 0 ? $item->harga_nego : $item->harga_awal;
+            $subtotal = $harga * ($item->jumlah_visitor ?? 0);
+            $totalTagihan += $subtotal;
         }
 
         if (request("output") == "pdf") {
-            $pdf = Pdf::loadView('tagihan.invoice_pdf', compact('data', 'tagihanKesenian'))->setPaper('a4', 'landscape');
-            // Storage::put('public/invoice/invoice.pdf', $pdf->output());
+            $pdf = Pdf::loadView('tagihan.invoice_pdf', compact('data', 'bookingItems', 'totalTagihan', 'tagihanKesenian'))
+                ->setPaper('a4', 'landscape');
             return $pdf->stream('invoice.pdf');
-            // $pdf->save(public_path('invoice/invoice.pdf'));
-            // Storage::put('public/invoice/invoice.pdf', $pdf->output());
-            // $url = Storage::url('public/invoice/invoice.pdf');
-            // return response()->download(public_path('invoice/invoice.pdf'))->deleteFileAfterSend(true);
         }
 
-
-
-        return view('tagihan/invoice', compact('data', 'tagihanKesenian'));
+        return view('tagihan.invoice', compact('data', 'bookingItems', 'totalTagihan', 'tagihanKesenian'));
     }
+
 
     public function send(Request $request, $id): RedirectResponse
     {
         $data = Booking::findOrFail($id);
         $no_telp = $data->noTelpPIC;
-        $token = 'LWk3d6eTgBZurFgZdKyu';
-
-        // Path to your generated PDF invoice
-        // $pdfPath = public_path('invoice.invoice.pdf');
-
-        // Example WhatsApp message with PDF link
         $message = "Invoice Anda terlampir. Silakan unduh: " . url('/admin/invoice' . $data->id);
 
-        // Initialize CURL
-        $curl = curl_init();
-
-        // Set CURL options
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.fonnte.com/send',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => array('target' => $no_telp, 'message' => $message),
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: ' . $token
-            ),
-        ));
-
-        // Execute CURL request
-        $response = curl_exec($curl);
-
-        // Close CURL
-        curl_close($curl);
-
-        // Delete PDF file after sending (optional)
-        // unlink($pdfPath);
-
         // Redirect back with success message
+        $token = 'LWk3d6eTgBZurFgZdKyu'; // Ganti token Fonnte kamu
+        $response = Http::withHeaders([
+            'Authorization' => $token,
+        ])->post('https://api.fonnte.com/send', [
+                    'target' => $no_telp,
+                    'message' => $message,
+                ]);
+
         return Redirect::back()->with('success', 'Invoice terkirim ke WhatsApp');
     }
 

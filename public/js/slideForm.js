@@ -1,507 +1,159 @@
-var progresBar = document.getElementsByClassName("progresBar");
-var kirimData = document.getElementById("kirim-data");
-console.log(progresBar);
-var pageSlide = 0;
-var dataDiri = document.getElementById("dataDiri");
-var paketWisata = document.getElementById("paketWisata");
-var studiBanding = document.getElementById("studi-banding");
-var batik = document.getElementById("batik");
-var kesenian = document.getElementById("kesenian");
-var cocokTanam = document.getElementById("cocok-tanam");
-var permainan = document.getElementById("permainan");
-var kuliner = document.getElementById("kuliner");
-var homestay = document.getElementById("homestay");
+document.addEventListener("DOMContentLoaded", function () {
+    let currentStep = 0;
+    const steps = Array.from(document.querySelectorAll(".step"));
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const tombolLanjut = document.querySelector(".tombol-lanjut");
+    const kirimData = document.getElementById("kirim-data");
+    const boxes = Array.from(document.querySelectorAll(".box")); // progress bar kalau ada
 
+    function showStep(index) {
+        index = Math.max(0, Math.min(index, steps.length - 1));
+        currentStep = index;
 
+        // tampilkan step aktif
+        steps.forEach((s, i) => {
+            s.classList.toggle("active", i === index);
+        });
 
+        // tombol navigasi
+        if (prevBtn)
+            prevBtn.style.display = index === 0 ? "none" : "inline-block";
+        if (nextBtn)
+            nextBtn.style.display =
+                index === steps.length - 1 ? "none" : "inline-block";
+        if (tombolLanjut)
+            tombolLanjut.style.display =
+                index === steps.length - 1 ? "none" : "block";
+        if (kirimData)
+            kirimData.style.display =
+                index === steps.length - 1 ? "block" : "none";
 
-function batal() {
-    pageSlide = 0;
+        // progress bar update
+        boxes.forEach((b, i) => {
+            b.classList.toggle("box-active", i <= index);
+        });
 
-    for (var i = 7; i > pageSlide; i--) {
-        progresBar[i].setAttribute("class", "box mb-1 progresBar");
+        // 🔥 kalau step aktif = ringkasan, isi datanya
+        if (steps[index].id === "ringkasan") {
+            isiRingkasan();
+        }
     }
 
-    if (pageSlide === 0) {
-        dataDiri.style.display = "block";
-        paketWisata.style.display = "none";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-        kirimData.style.display = "none";
+    function validateDataDiri() {
+        const requiredFields = document.querySelectorAll(
+            "#dataDiri input[required], #dataDiri select[required], #dataDiri textarea[required]"
+        );
+        let valid = true;
+
+        requiredFields.forEach((field) => {
+            // skip kalau hidden
+            if (field.offsetParent === null) return;
+
+            if (!field.value.trim()) {
+                field.classList.add("is-invalid");
+                valid = false;
+            } else {
+                field.classList.remove("is-invalid");
+            }
+
+            // ✅ validasi khusus tanggal
+            if (field.id === "tanggal-booking") {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // reset jam biar bandingannya bersih
+                const picked = new Date(field.value);
+
+                if (picked < today) {
+                    field.classList.add("is-invalid");
+                    valid = false;
+                }
+            }
+        });
+
+        return valid;
     }
 
-    if (pageSlide === 1) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "block";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-    }
+    function isiRingkasan() {
+        let paketDipilih = [];
+        let kategori = [
+            "studiBanding",
+            "batik",
+            "kesenian",
+            "cocokTanam",
+            "permainan",
+            "kuliner",
+            "homestay",
+        ];
 
-    if (pageSlide === 2) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "block";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-    }
-
-    if (pageSlide === 3) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "block";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-    }
-
-    if (pageSlide === 4) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "block";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-    }
-
-    if (pageSlide === 5) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "block";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-    }
-
-    if (pageSlide === 6) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "block";
-        homestay.style.display = "none";
-    }
-
-    if (pageSlide === 7) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "block";
-    }
-}
-
-function selanjutnya() {
-    var tanggalBookingValue = document.getElementById("tanggal-booking").value;
-    var namaPembookingValue = document.getElementById("nama-pembooking").value;
-    var organisasiValue = document.getElementById("organisasi").value;
-    var noTelpPicValue = document.getElementById("no-telp-pic").value;
-    var jamBookingMulaiValue =
-        document.getElementById("jam-booking-mulai").value;
-
-    var jumlahVisitorValue = document.getElementById("jumlah-visitor").value;
-    if (
-        tanggalBookingValue.trim() === "" ||
-        namaPembookingValue.trim() === "" ||
-        organisasiValue.trim() === "" ||
-        noTelpPicValue.trim() === "" ||
-        jamBookingMulaiValue.trim() === "" ||
-        jumlahVisitorValue.trim() === ""
-    ) {
-        alert("Lengkapi Seluruh Data Diri untuk Melanjutkan Booking!");
-    } else {
-        if (pageSlide >= 0 && pageSlide < 7) {
-            pageSlide++;
-            for (var i = 0; i <= pageSlide; i++) {
-                progresBar[i].setAttribute(
-                    "class",
-                    "box-active mb-1 progresBar"
+        kategori.forEach((nama) => {
+            let paket = document.querySelector(
+                "input[name='" + nama + "']:checked"
+            );
+            if (paket) {
+                let label = document.querySelector(
+                    "label[for='" + paket.id + "']"
                 );
+                let namaPaket = label.querySelector("h5").innerText.trim();
+
+                // ambil harga dari p terakhir
+                let hargaElement = label.querySelector(
+                    "p.card-text:last-of-type"
+                );
+                let harga = hargaElement
+                    ? hargaElement.innerText.trim()
+                    : "Rp 0";
+
+                // skip kalau "Tidak Pesan"
+                if (namaPaket !== "Tidak Pesan") {
+                    paketDipilih.push({ nama: namaPaket, harga: harga });
+                }
+            }
+        });
+
+        // bikin table rows
+        let rows =
+            paketDipilih.length > 0
+                ? paketDipilih
+                      .map(
+                          (p) =>
+                              `<tr><td>${p.nama}</td><td class="text-end">${p.harga}</td></tr>`
+                      )
+                      .join("")
+                : `<tr><td colspan="2"><i>Tidak ada paket dipilih</i></td></tr>`;
+
+        // inject ke tabel
+        document.getElementById(
+            "summaryPaketList"
+        ).innerHTML = `<table class="table table-sm table-bordered mb-0">
+            <thead>
+                <tr>
+                    <th>Paket</th>
+                    <th>Harga</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>`;
+    }
+
+    // handler tombol
+    window.changeStep = function (direction) {
+        if (direction === 1 && currentStep === 0) {
+            // validasi Data Diri (step pertama)
+            if (!validateDataDiri()) {
+                alert("Harap isi semua data diri terlebih dahulu!");
+                return; // jangan lanjut kalau masih kosong
             }
         }
+        showStep(currentStep + direction);
+    };
 
-        if (pageSlide === 0) {
-            dataDiri.style.display = "block";
-            paketWisata.style.display = "none";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
+    // handler klik progress bar (opsional)
+    window.progress = function (index) {
+        showStep(index);
+    };
 
-        if (pageSlide === 1) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "block";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 2) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "block";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 3) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "block";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 4) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "block";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 5) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "block";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 6) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "block";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 7) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "block";
-            kirimData.style.display = "block";
-        }
-    }
-
-}
-
-function sebelumnya() {
-    if (pageSlide > 0 && pageSlide <= 7) {
-        pageSlide--;
-
-        for (var i = 7; i > pageSlide; i--) {
-            progresBar[i].setAttribute("class", "box mb-1 progresBar");
-        }
-    }
-
-    if (pageSlide === 0) {
-        dataDiri.style.display = "block";
-        paketWisata.style.display = "none";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-        kirimData.style.display = "none";
-    }
-
-    if (pageSlide === 1) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "block";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-        kirimData.style.display = "none";
-    }
-
-    if (pageSlide === 2) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "block";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-        kirimData.style.display = "none";
-    }
-
-    if (pageSlide === 3) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "block";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-        kirimData.style.display = "none";
-    }
-
-    if (pageSlide === 4) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "block";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-        kirimData.style.display = "none";
-    }
-
-    if (pageSlide === 5) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "block";
-        kuliner.style.display = "none";
-        homestay.style.display = "none";
-        kirimData.style.display = "none";
-    }
-
-    if (pageSlide === 6) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "block";
-        homestay.style.display = "none";
-        kirimData.style.display = "none";
-    }
-
-    if (pageSlide === 7) {
-        dataDiri.style.display = "none";
-        paketWisata.style.display = "block";
-        studiBanding.style.display = "none";
-        batik.style.display = "none";
-        kesenian.style.display = "none";
-        cocokTanam.style.display = "none";
-        permainan.style.display = "none";
-        kuliner.style.display = "none";
-        homestay.style.display = "block";
-        kirimData.style.display = "block";
-    }
-}
-
-function progress(data) {
-    var tanggalBookingValue = document.getElementById("tanggal-booking").value;
-    var namaPembookingValue = document.getElementById("nama-pembooking").value;
-    var organisasiValue = document.getElementById("organisasi").value;
-    var noTelpPicValue = document.getElementById("no-telp-pic").value;
-    var jamBookingMulaiValue =
-        document.getElementById("jam-booking-mulai").value;
-
-    var jumlahVisitorValue = document.getElementById("jumlah-visitor").value;
-    if (
-        tanggalBookingValue.trim() === "" ||
-        namaPembookingValue.trim() === "" ||
-        organisasiValue.trim() === "" ||
-        noTelpPicValue.trim() === "" ||
-        jamBookingMulaiValue.trim() === "" ||
-        jumlahVisitorValue.trim() === ""
-    ) {
-        alert("Lengkapi Seluruh Data Diri untuk Melanjutkan Booking!");
-    } else {
-        pageSlide = data;
-
-        for (var j = 0; j <= pageSlide; j++) {
-            progresBar[j].setAttribute("class", "box-active mb-1 progresBar");
-        }
-
-        for (var i = 7; i > pageSlide; i--) {
-            progresBar[i].setAttribute("class", "box mb-1 progresBar");
-            progresBar[i].setAttribute("class", "box mb-1 progresBar");
-        }
-
-        if (pageSlide === 0) {
-            dataDiri.style.display = "block";
-            paketWisata.style.display = "none";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 1) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "block";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 2) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "block";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 3) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "block";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 4) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "block";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 5) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "block";
-            kuliner.style.display = "none";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 6) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "block";
-            homestay.style.display = "none";
-            kirimData.style.display = "none";
-        }
-
-        if (pageSlide === 7) {
-            dataDiri.style.display = "none";
-            paketWisata.style.display = "block";
-            studiBanding.style.display = "none";
-            batik.style.display = "none";
-            kesenian.style.display = "none";
-            cocokTanam.style.display = "none";
-            permainan.style.display = "none";
-            kuliner.style.display = "none";
-            homestay.style.display = "block";
-            kirimData.style.display = "block";
-        }
-    }
-}
+    // init pertama
+    showStep(currentStep);
+});

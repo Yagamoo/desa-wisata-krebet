@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('deskripsi');
             $table->integer('harga_belajar');
             $table->integer('harga_pementasan');
+            $table->string('gambar')->nullable();
             $table->timestamps();
         });
     }

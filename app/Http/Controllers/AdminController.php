@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\BookingItemNego;
 use App\Models\Keuangan;
 use App\Models\Pemasukan;
 use App\Models\StudyBanding;
@@ -202,6 +203,7 @@ class AdminController extends Controller
     public function show()
     {
         $bookings = Booking::all();
+        // dd($bookings);
         return view('admin.booking', compact('bookings'));
     }
 
@@ -210,6 +212,8 @@ class AdminController extends Controller
      */
     public function edit(Request $request, $id)
     {
+        $data = Booking::findOrFail($id);
+
         $batiks = Batik::all();
         $kesenians = Kesenian::all();
         $cocokTanams = CocokTanam::all();
@@ -217,9 +221,103 @@ class AdminController extends Controller
         $kuliners = Kuliner::all();
         $homestays = Homestay::all();
         $studiBandings = StudyBanding::all();
-        $data = Booking::findOrFail($id);
         $guides = Guide::all();
-        return view('admin.edit', compact('data', 'guides', 'batiks', 'homestays', 'studiBandings', 'kesenians', 'cocokTanams', 'permainans', 'kuliners'));
+
+        // Ambil semua item nego berdasarkan booking_id
+        $negos = BookingItemNego::where('booking_id', $id)->get()->keyBy('jenis');
+
+        // Ambil harga tiap jenis (kalau tidak ada, akan null)
+        $hargaBatik = $negos->get('batik');
+        $hargaCocokTanam = $negos->get('cocok_tanam');
+        $hargaPermainan = $negos->get('permainan');
+        $hargaKuliner = $negos->get('kuliner');
+        $hargaHomestay = $negos->get('homestay');
+        $hargaStudyBanding = $negos->get('study_banding');
+
+        // Kesenian punya 2 versi → Belajar & Pementasan
+        // Kalau data di tabel booking_item_negos cuma ada satu jenis “kesenian”,
+        // maka kita duplikasi berdasarkan ketKesenian dari paket
+        $hargaKesenianBelajar = null;
+        $hargaKesenianPementasan = null;
+
+        // Kalau kamu simpan 2 baris berbeda di DB (kesenian_belajar & kesenian_pementasan)
+        // bisa langsung ambil begini:
+        $hargaKesenianBelajar = $negos->get('kesenian_belajar');
+        $hargaKesenianPementasan = $negos->get('kesenian_pementasan');
+
+        // Kalau belum ada dua jenis terpisah di DB:
+        // cukup set salah satu harga kesenian sebagai acuan
+        if (!$hargaKesenianBelajar && !$hargaKesenianPementasan) {
+            if ($data->paket->ketKesenian === 'belajar') {
+                $hargaKesenianBelajar = $negos->get('kesenian');
+            } else {
+                $hargaKesenianPementasan = $negos->get('kesenian');
+            }
+        }
+        // dd($hargaBatik->harga_nego);
+        $totalBatik = ($hargaBatik->harga_nego && $hargaBatik->harga_nego > 0
+            ? $hargaBatik->harga_nego
+            : $hargaBatik->harga_awal) * $hargaBatik->jumlah_visitor;
+        $totalCocokTanam = ($hargaCocokTanam->harga_nego && $hargaCocokTanam->harga_nego > 0
+            ? $hargaCocokTanam->harga_nego
+            : $hargaCocokTanam->harga_awal) * $hargaCocokTanam->jumlah_visitor;
+        $totalPermainan = ($hargaPermainan->harga_nego && $hargaPermainan->harga_nego > 0
+            ? $hargaPermainan->harga_nego
+            : $hargaPermainan->harga_awal) * $hargaPermainan->jumlah_visitor;
+        $totalKuliner = ($hargaKuliner->harga_nego && $hargaKuliner->harga_nego > 0
+            ? $hargaKuliner->harga_nego
+            : $hargaKuliner->harga_awal) * $hargaKuliner->jumlah_visitor;
+        $totalHomestay = ($hargaHomestay->harga_nego && $hargaHomestay->harga_nego > 0
+            ? $hargaHomestay->harga_nego
+            : $hargaHomestay->harga_awal) * $hargaHomestay->jumlah_visitor;
+        $totalStudyBanding = ($hargaStudyBanding->harga_nego && $hargaStudyBanding->harga_nego > 0
+            ? $hargaStudyBanding->harga_nego
+            : $hargaStudyBanding->harga_awal) * $hargaStudyBanding->jumlah_visitor;
+
+        // Hitung total kesenian
+        $hargaBelajar  = 0;
+        $hargaPementasan  = 0;
+        if ($data->paket->ketKesenian === 'belajar' && $hargaKesenianBelajar) {
+            $hargaBelajar  = ($hargaKesenianBelajar->harga_nego && $hargaKesenianBelajar->harga_nego > 0
+            ? $hargaKesenianBelajar->harga_nego
+            : $hargaKesenianBelajar->harga_awal) * ($hargaKesenianBelajar->jumlah_visitor ?? 0);
+        } elseif ($data->paket->ketKesenian === 'pementasan' && $hargaKesenianPementasan) {
+            $hargaPementasan  = ($hargaKesenianPementasan->harga_nego && $hargaKesenianPementasan->harga_nego > 0
+            ? $hargaKesenianPementasan->harga_nego
+            : $hargaKesenianPementasan->harga_awal) * ($hargaKesenianPementasan->jumlah_visitor ?? 0);
+        }
+        // dd($totalKesenian);
+
+        $totalAll = $totalBatik + $totalCocokTanam + $totalPermainan + $totalKuliner + $totalHomestay + $totalStudyBanding + $hargaBelajar + $hargaPementasan;
+
+        return view('admin.edit', compact(
+            'data',
+            'guides',
+            'batiks',
+            'homestays',
+            'studiBandings',
+            'kesenians',
+            'cocokTanams',
+            'permainans',
+            'kuliners',
+            'hargaBatik',
+            'hargaKesenianBelajar',
+            'hargaKesenianPementasan',
+            'hargaCocokTanam',
+            'hargaPermainan',
+            'hargaKuliner',
+            'hargaHomestay',
+            'hargaStudyBanding',
+            'totalBatik',
+            'totalCocokTanam',
+            'totalPermainan',
+            'totalKuliner',
+            'totalHomestay',
+            'totalStudyBanding',
+            'hargaPementasan',
+            'hargaBelajar',
+            'totalAll'
+        ));
     }
 
     /**
@@ -227,88 +325,124 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request);
-        if ($request->status) {
-            $booking = Booking::findOrFail($id);
-            if ($request->pembayaran == 'dp') {
-                $booking->status = 'ACC - DP';
-            } else if ($request->pembayaran == 'penuh') {
-                $booking->status = 'ACC - Lunas';
-            }
 
-            $booking->save();
+        if ($request->kesenianBelajar == "1.belajar") {
+            list($kesenianID, $ketKesenian) = explode('.', $request->kesenianPementasan);
+        } else if ($request->kesenianPementasan == "1.pementasan") {
+            list($kesenianID, $ketKesenian) = explode('.', $request->kesenianBelajar);
+        }
+        $bookingID = Booking::findOrFail($id);
+        $paketID = Paket::findOrFail($bookingID->paket_id);
 
-            // Jika status == "Sudah ACC", buat pemasukan
-            if ($booking->status = 'ACC - DP' || $booking->status = 'ACC - Lunas') {
-                // Cek apakah sudah ada pemasukan untuk booking ini agar tidak dobel
-                $existing = Keuangan::where('booking_id', $booking->id)->first();
-                if (!$existing) {
-                    $jumlah = str_replace('.', '', $request->jumlah); // hilangkan titik
-                    $jumlah = preg_replace('/\D/', '', $jumlah); // jaga-jaga: hilangkan non-digit
+        $paketID->update([
+            'batik_id' => $request->batik,
+            'kesenian_id' => $kesenianID,
+            'study_banding_id' => $request->studiBanding,
+            'cocok_tanam_id' => $request->cocokTanam,
+            'permainan_id' => $request->permainan,
+            'homestay_id' => $request->homestay,
+            'kuliner_id' => $request->kuliner,
+            'ketKesenian' => $ketKesenian,
+        ]);
 
-                    $filePath = null;
-
-                    if ($request->hasFile('bukti_pembayaran')) {
-                        $file = $request->file('bukti_pembayaran');
-                        $filePath = $file->store('bukti_pembayaran', 'public'); // simpan di storage/app/public/bukti_pembayaran
-                    }
-
-
-                    Keuangan::create([
-                        'booking_id' => $booking->id,
-                        'keterangan' => 'Pemasukan dari Booking #' . $booking->id,
-                        'tanggal' => now(),
-                        'jenis' => 'pemasukan',
-                        'tipe_pembayaran' => $request->pembayaran,
-                        'jumlah' => $jumlah,
-                        'bukti' => $filePath,
-                    ]);
-                }
-            }
-
-            // return response()->json(['success' => true]);
+        $paket = $paketID;
+        if ($ketKesenian == 'pementasan') {
+            $tagihan = (($paket->batik->harga + $paket->kesenian->harga_pementasan + $paket->cocokTanam->harga + $paket->permainan->harga + $paket->kuliner->harga) * $request->visitor) + $paket->homestay->harga + $paket->study_banding->harga;
         } else {
-            if ($request->kesenianBelajar == "1.belajar") {
-                list($kesenianID, $ketKesenian) = explode('.', $request->kesenianPementasan);
-            } else if ($request->kesenianPementasan == "1.pementasan") {
-                list($kesenianID, $ketKesenian) = explode('.', $request->kesenianBelajar);
+            $tagihan = (($paket->batik->harga + $paket->kesenian->harga_belajar + $paket->cocokTanam->harga + $paket->permainan->harga + $paket->kuliner->harga) * $request->visitor) + $paket->homestay->harga + $paket->study_banding->harga;
+        }
+
+        $bookingID->update([
+            'nama_pic' => $request->nama_pic,
+            'organisasi' => $request->organisasi,
+            'noTelpPIC' => $request->notelppic,
+            'visitor' => $request->visitor,
+            'tanggal' => $request->tanggal,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+            'paket_id' => $paket->id,
+            'tagihan' => $tagihan,
+            'guide_id' => $request->guide,
+            // 'status' => $request->statusData,
+        ]);
+
+
+        $jenisList = [
+            'batik',
+            'cocok_tanam',
+            'permainan',
+            'kuliner',
+            'homestay',
+            'study_banding'
+        ];
+
+        // Update selain kesenian
+        foreach ($jenisList as $jenis) {
+            $model = BookingItemNego::where('booking_id', $bookingID->id)
+                ->where('jenis', $jenis)
+                ->first();
+
+            if ($model) {
+                // Ambil harga awal dari relasi paket
+                $hargaAwal = match ($jenis) {
+                    'batik' => $paket->batik->harga ?? 0,
+                    'cocok_tanam' => $paket->cocokTanam->harga ?? 0,
+                    'permainan' => $paket->permainan->harga ?? 0,
+                    'kuliner' => $paket->kuliner->harga ?? 0,
+                    'homestay' => $paket->homestay->harga ?? 0,
+                    'study_banding' => $paket->study_banding->harga ?? 0,
+                    default => 0,
+                };
+
+                $model->update([
+                    'harga_awal' => $hargaAwal,
+                    'harga_nego' => str_replace('.', '', $request->{'harga_nego_' . $jenis}),
+                    'catatan' => $request->{'catatan_' . $jenis},
+                    'jumlah_visitor' => $request->{'visitor_' . $jenis},
+                ]);
             }
-            $bookingID = Booking::findOrFail($id);
-            $paketID = Paket::findOrFail($bookingID->paket_id);
+        }
 
-            $paketID->update([
-                'batik_id' => $request->batik,
-                'kesenian_id' => $kesenianID,
-                'study_banding_id' => $request->studiBanding,
-                'cocok_tanam_id' => $request->cocokTanam,
-                'permainan_id' => $request->permainan,
-                'homestay_id' => $request->homestay,
-                'kuliner_id' => $request->kuliner,
-                'ketKesenian' => $ketKesenian,
-            ]);
+        // 🔸 Kesenian — update sesuai jenis aktif
+        $paket = $bookingID->paket; // pastikan relasi 'paket' ada
+        $jenisKesenianAktif = $paket->ketKesenian; // isinya 'belajar' atau 'pementasan'
 
-            $paket = $paketID;
-            if ($ketKesenian == 'pementasan') {
-                $tagihan = (($paket->batik->harga + $paket->kesenian->harga_pementasan + $paket->cocokTanam->harga + $paket->permainan->harga + $paket->kuliner->harga) * $request->visitor) + $paket->homestay->harga + $paket->study_banding->harga;
-            } else {
-                $tagihan = (($paket->batik->harga + $paket->kesenian->harga_belajar + $paket->cocokTanam->harga + $paket->permainan->harga + $paket->kuliner->harga) * $request->visitor) + $paket->homestay->harga + $paket->study_banding->harga;
-            }
+        $model = BookingItemNego::where('booking_id', $bookingID->id)
+            ->where('jenis', 'kesenian')
+            ->first();
 
-            $bookingID->update([
-                'nama_pic' => $request->nama_pic,
-                'organisasi' => $request->organisasi,
-                'noTelpPIC' => $request->notelppic,
-                'visitor' => $request->visitor,
-                'tanggal' => $request->tanggal,
-                'jam_mulai' => $request->jam_mulai,
-                'jam_selesai' => $request->jam_selesai,
-                'paket_id' => $paket->id,
-                'tagihan' => $tagihan,
-                'guide_id' => $request->guide,
-                'status' => $request->statusData,
+        if ($model) {
+            $hargaAwalKesenian = $jenisKesenianAktif == 'pementasan'
+                ? ($paket->kesenian->harga_pementasan ?? 0)
+                : ($paket->kesenian->harga_belajar ?? 0);
+
+            $model->update([
+                'harga_awal' => $hargaAwalKesenian,
+                'harga_nego' => $request->filled('harga_nego_kesenian_' . $jenisKesenianAktif)
+                    ? str_replace('.', '', $request->{'harga_nego_kesenian_' . $jenisKesenianAktif})
+                    : 0,
+                'catatan' => $request->{'catatan_kesenian_' . $jenisKesenianAktif},
+                'jumlah_visitor' => $request->{'visitor_kesenian_' . $jenisKesenianAktif} ?? 0,
             ]);
         }
-        return redirect()->route('admin.booking');
+
+        $totalTagihan = 0;
+
+        $items = BookingItemNego::where('booking_id', $bookingID->id)->get();
+
+        foreach ($items as $item) {
+            $harga = ($item->harga_nego && $item->harga_nego > 0)
+                ? $item->harga_nego
+                : $item->harga_awal;
+
+            $totalTagihan += $harga * ($item->jumlah_visitor ?? 1);
+        }
+
+        $bookingID->update([
+            'tagihan' => $totalTagihan,
+        ]);
+
+        return redirect()->back()->with('success', 'Data booking berhasil diperbarui!');
     }
 
     /**
@@ -325,14 +459,27 @@ class AdminController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $detail = Booking::findOrFail($id);
-        if ($detail->paket->ketKesenian == 'pementasan') {
-            $tagihanKesenian = 150000;
-        } else {
-            $tagihanKesenian = 40000;
+        $detail = Booking::with(['paket.kesenian', 'paket.batik', 'guide'])->findOrFail($id);
+        $bookingItems = BookingItemNego::where('booking_id', $id)->get();
+
+        // Hitung total tagihan dari item nego
+        $totalTagihan = $bookingItems->sum(function ($item) {
+            $harga = $item->harga_nego > 0 ? $item->harga_nego : $item->harga_awal;
+            return $harga * ($item->jumlah_visitor ?? 0);
+        });
+
+        // Hitung khusus kesenian (jika mau)
+        $tagihanKesenian = 0;
+        $kesenianItem = $bookingItems->where('jenis', 'kesenian')->first();
+
+        if ($kesenianItem) {
+            $harga = $kesenianItem->harga_nego > 0 ? $kesenianItem->harga_nego : $kesenianItem->harga_awal;
+            $tagihanKesenian = $harga * ($kesenianItem->jumlah_visitor ?? 0);
         }
-        return view('admin.detail', compact('detail', 'tagihanKesenian'));
+
+        return view('admin.detail', compact('detail', 'bookingItems', 'totalTagihan', 'tagihanKesenian'));
     }
+
 
     public function searchPIC(Request $request)
     {
@@ -376,6 +523,8 @@ class AdminController extends Controller
                 return redirect()->route('admin.dashboard')->with('success', 'Anda berhasil login!');
             } elseif ($user->hasRole(roles: 'Bendahara')) {
                 return redirect()->route('admin.keuangan.index')->with('success', 'Anda berhasil login!');
+            } elseif ($user->hasRole('Bendahara Lapangan')) {
+                return redirect()->route('admin.guide.index')->with('success', 'Anda berhasil login!');
             }
         } else {
             return back()->with('error', 'Periksa Kembali Username atau Password Anda!');

@@ -22,7 +22,7 @@
             <!-- Calendar Start -->
             <div class="row justify-content-center m-lg-1 m-1 ">
                 <div class="col bg-white p-lg-1 p-2 rounded text-center">
-                    <button class="btn btn-primary mb-3 w-80" data-bs-toggle="modal" data-bs-target="#tambahModal">Booking
+                    <button class="btn btn-primary my-2 w-80" data-bs-toggle="modal" data-bs-target="#tambahModal">Booking
                         Tanggal Sekarang</button>
                 </div>
             </div>
@@ -53,7 +53,7 @@
                         <div class="col-lg-10 col">
                             <div class="row" id="progress">
                                 <div class="col p-1 text-center" onclick="progress(0)">
-                                    <div class="box-active mb-1 progresBar"></div>
+                                    <div class="box box-active mb-1 progresBar"></div>
                                     <p>Data Diri</p>
                                 </div>
                                 <div class="col p-1 text-center " onclick="progress(1)">
@@ -84,12 +84,15 @@
                                     <div class="box mb-1 progresBar"></div>
                                     <p>Paket Homestay</p>
                                 </div>
-
+                                <div class="col p-1 text-center" onclick="progress(8)">
+                                    <div class="box mb-1 progresBar"></div>
+                                    <p>Ringkasan</p>
+                                </div>
                             </div>
                         </div>
                         <hr>
                         <div class="col-12">
-                            <div class="row justify-content-center rounded p-3 border m-3" id="dataDiri">
+                            <div class="row justify-content-center rounded p-3 border m-3 step" id="dataDiri">
                                 <h5 class="fw-bold m-3">Isi Data Diri Booking</h5>
 
                                 <div class="col me-4">
@@ -97,8 +100,10 @@
                                         <div class="mb-3">
                                             <label for="tanggal-booking" class="form-label">Tanggal Visitor</label>
                                             <input type="date" class="form-control" name="tanggal" id="tanggal-booking"
-                                                placeholder="Masukan tanggal YYYY-MM-DD" value="" required>
+                                                placeholder="Masukan tanggal YYYY-MM-DD" min="<?= date('Y-m-d') ?>"
+                                                required>
                                         </div>
+
                                         <div class="mb-3">
                                             <label for="nama-pembooking" class="form-label">Nama Pembooking</label>
                                             <input type="text" class="form-control" name="nama_pic" id="nama-pembooking"
@@ -114,10 +119,6 @@
                                             <input type="text" placeholder="Masukan No. Telp" class="form-control"
                                                 name="notelppic" id="no-telp-pic" value="" required>
                                         </div>
-
-
-
-
                                 </div>
                                 <div class="col">
                                     <div class="mb-3">
@@ -133,7 +134,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="jumlah-visitor" class="mb-2">Jumlah Visitor</label>
-                                        <input type="text" onchange="validateVisitorCount()"
+                                        <input type="number" onchange="validateVisitorCount()"
                                             placeholder="Masukan Jumlah Visitor" class="form-control" name="visitor"
                                             id="jumlah-visitor" value="" required>
                                     </div>
@@ -151,7 +152,7 @@
 
                             <div class="row justify-content-center m-3" id="paketWisata">
                                 <h5 class="fw-bold m-3 mt-2">Pilih Paket-Paket Desa Wisata</h5>
-                                <div class="col" id="studi-banding">
+                                <div class="col step" id="studi-banding">
                                     <!-- Paket Homestay -->
                                     <div class="row border rounded p-4 mb-3 justify-content-center">
                                         <label for="paket-kuliner" class="form-label fw-bold">Paket Study Banding</label>
@@ -200,7 +201,7 @@
                                     </div>
 
                                 </div>
-                                <div class="col" id="batik">
+                                <div class="col step" id="batik">
                                     <div class="row border rounded p-4 mb-3 justify-content-center">
                                         <label for="paket-batik" class="form-label fw-bold">Paket Batik</label>
                                         @foreach ($batiks as $batik)
@@ -246,7 +247,7 @@
                                     </div>
 
                                 </div>
-                                <div class="col" id="kesenian">
+                                <div class="col step" id="kesenian">
                                     <!-- Paket Kesenian -->
                                     <div class="row border rounded p-4 mb-3 justify-content-center">
                                         <label for="paket-kesenian" class="form-label fw-bold">Paket Kesenian Belajar
@@ -262,6 +263,9 @@
                                                         onclick="waktuKesenian(0)">
                                                     <label class="form-check-label" for="kesenian{{ $kesenian->id }}">
                                                         <h5 class="card-header fw-bold">{{ $kesenian->nama }}</h5>
+                                                        <hr>
+                                                        <small>Harga:</small>
+                                                        <p class="card-text">Rp {{ $kesenian->harga_belajar }}</p>
                                                     </label>
                                                 </div>
                                             </div>
@@ -280,6 +284,9 @@
                                                         onclick="waktuKesenian(0)">
                                                     <label class="form-check-label" for="kesenian2{{ $kesenian->id }}">
                                                         <h5 class="card-header fw-bold">{{ $kesenian->nama }}</h5>
+                                                        <hr>
+                                                        <small>Harga:</small>
+                                                        <p class="card-text">Rp {{ $kesenian->harga_pementasan }}</p>
                                                     </label>
                                                 </div>
                                             </div>
@@ -308,7 +315,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col" id="cocok-tanam">
+                                <div class="col step" id="cocok-tanam">
                                     <!-- Paket Cocok Tanam -->
                                     <div class="row border rounded p-4 mb-3">
                                         <label for="paket-cocok-tanam" class="form-label fw-bold">Paket Cocok
@@ -349,7 +356,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col" id="permainan">
+                                <div class="col step" id="permainan">
                                     <!-- Paket Permainan -->
                                     <div class="row border rounded p-4 mb-3 justify-content-center">
                                         <label for="paket-permainan" class="form-label fw-bold">Paket Permainan
@@ -365,6 +372,9 @@
                                                         onclick="waktuPermainan(0)">
                                                     <label class="form-check-label" for="permainan{{ $permainan->id }}">
                                                         <h5 class="card-header fw-bold">{{ $permainan->nama }}</h5>
+                                                        <hr>
+                                                        <small>Harga:</small>
+                                                        <p class="card-text">Rp {{ $permainan->harga }}</p>
                                                     </label>
                                                 </div>
                                             </div>
@@ -385,7 +395,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col" id="kuliner">
+                                <div class="col step" id="kuliner">
                                     <!-- Paket Kuliner -->
                                     <div class="row border rounded p-4 mb-3 justify-content-center">
                                         <label for="paket-kuliner" class="form-label fw-bold">Paket Kuliner</label>
@@ -422,7 +432,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col" id="homestay">
+                                <div class="col step" id="homestay">
                                     <!-- Paket Homestay -->
                                     <div class="row border rounded p-4 mb-3 justify-content-center">
                                         <label for="paket-kuliner" class="form-label fw-bold">Paket Homestay</label>
@@ -458,23 +468,29 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col step" id="ringkasan">
+                                    <div class="row border rounded p-4 mb-3 justify-content-center">
+                                        <h5 class="fw-bold">Ringkasan Booking</h5>
+                                        <div id="summaryPaketList"></div>
+                                    </div>
+                                </div>
+
                             </div>
-                            <div class="tombol-lanjut" style="text-align: center;">
-                                <p class="btn btn-warning" data-bs-dismiss="modal" onclick="batal()">Batal</p>
-                                <p class="btn btn-secondary" id="sebelumnya" onclick="sebelumnya()">sebelumnya</p>
-                                <p class="btn btn-primary" onclick="selanjutnya()">Selanjutnya</p>
+                            <div class="tombol-lanjut text-center">
+                                <button class="btn btn-warning" data-bs-dismiss="modal" onclick="batal()">Batal</button>
+                                <button class="btn btn-secondary" id="prevBtn"
+                                    onclick="changeStep(-1)">Sebelumnya</button>
+                                <button class="btn btn-primary" id="nextBtn"
+                                    onclick="changeStep(1)">Selanjutnya</button>
                             </div>
 
-                            <div id="kirim-data" style="text-align: center;">
-                                {{-- <button type="submit" class="btn btn-primary" onclick="waktuAkhir()">Submit</button> --}}
-                                {{-- <button type="submit" class="btn btn-primary" onclick="tambahBooking(event)">Submit</button> --}}
-                                <a type="text" class="btn btn-primary mt-3" data-bs-toggle="modal"
+                            <div id="kirim-data" class="text-center" style="display:none;">
+                                <button type="text" class="btn btn-warning" data-bs-dismiss="modal">Batal</button>
+                                <button class="btn btn-secondary" id="prevBtn"
+                                    onclick="changeStep(-1)">Sebelumnya</button>
+                                <a type="text" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#submitModal" onclick="waktuAkhir()">Booking Sekarang</a>
-                                <button type="text" class="btn btn-warning mt-3"
-                                    data-bs-dismiss="modal">Batal</button>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -497,17 +513,43 @@
                                 <p class="h5 fw-bold p-2 text-white">Status Booking</p>
                             </div>
                             <div class="ps-3 mb-3">
-                                <p class="mt-3">Nama Pembooking : <strong id="nama-pembooking-display"></strong></p>
-                                <p>Organisasi :<strong id="organisasi-display"></strong> </p>
-                                <p>Visitor :<strong id="visitor-display"></strong> </p>
-                                <p>Tanggal :<strong id="tanggal-display"></strong> </p>
-                                <p>Jam Mulai :<strong id="jam-mulai-display"></strong> </p>
-                                <p>Jam Selesai :<strong id="jam-selesai-display"></strong> </p>
-                                <p>Status : <button class="btn btn-secondary" id="status-display"></button> </p>
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th>Nama Pembooking</th>
+                                            <td><strong id="nama-pembooking-display"></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Organisasi</th>
+                                            <td><strong id="organisasi-display"></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Visitor</th>
+                                            <td><strong id="visitor-display"></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <td><strong id="tanggal-display"></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Jam Mulai</th>
+                                            <td><strong id="jam-mulai-display"></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Jam Selesai</th>
+                                            <td><strong id="jam-selesai-display"></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Status</th>
+                                            <td><button class="btn btn-secondary" id="status-display"></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <hr>
                             <div class="cekStatus text-center p-3">
-                                <p class="fw-bold">Periksa Status Booking ini lebih lanjut dengan menghubungi nomer Admin berikut :</p>
+                                <p class="fw-bold">Periksa Status Booking ini lebih lanjut dengan menghubungi nomer Admin
+                                    berikut :</p>
                                 <a href="https://wa.me/6285868144268" class="btn btn-primary"><i
                                         class="fa-brands fa-whatsapp"></i> 08734348343 </a>
                             </div>
@@ -545,7 +587,42 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.min.js"></script>
     <script type="text/javascript" src="/js/landingpage.js"></script>
-    <script src="/js/slideForm.js"></script>
+    <script src="{{ asset('js/slideForm.js') }}"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            if (!calendarEl) return;
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'id',
+                events: [
+                    @foreach ($bookings as $booking)
+                        {
+                            title: '{{ $booking->organisasi }}',
+                            start: '{{ $booking->tanggal }}T{{ $booking->jam_mulai }}',
+                            end: '{{ $booking->tanggal }}T{{ $booking->jam_selesai }}'
+                        },
+                    @endforeach
+                ]
+            });
+            calendar.render();
+
+            // Ambil semua tanggal yang sudah dibooking
+            const tanggalTerbooking = calendar.getEvents().map(e => e.start.toISOString().slice(0, 10));
+
+            // Reference ke input date
+            const inputTanggal = document.getElementById("tanggal-booking");
+
+            // Disable tanggal yang sudah dibooking
+            inputTanggal.addEventListener("input", function() {
+                if (tanggalTerbooking.includes(this.value)) {
+                    alert("Tanggal ini sudah dibooking. Silakan pilih tanggal lain.");
+                    this.value = ""; // reset input
+                }
+            });
+        });
+    </script>
     <script>
         var calendar; // Declare calendar variable in the global scope
 
@@ -614,13 +691,13 @@
                         // Prevent the browser from following the URL
                         info.jsEvent.preventDefault();
 
-                        // Extract data from the eventinfo.jsEvent.preventDefault();
                         var options = {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
                         };
                         var event = info.event;
+
                         var eventData = {
                             nama_pic: event.extendedProps.nama_pic,
                             organisasi: event.title,
@@ -635,27 +712,63 @@
                             status: event.extendedProps.status
                         };
 
+                        const message = `Halo Admin, saya sudah melakukan booking dengan detail berikut:
+- Nama: ${eventData.nama_pic}
+- Organisasi: ${eventData.organisasi}
+- Tanggal: ${eventData.tanggal}
+- Jam: ${eventData.jam_mulai} - ${eventData.jam_selesai}
+Mohon konfirmasi status booking saya. Terima kasih!`;
+
+const encodedMessage = encodeURIComponent(message);
+
                         // Update the modal's content
                         var modalBody = document.getElementById('modalBody');
                         modalBody.innerHTML = `
                         <div class="row justify-content-center">
                             <div class="col m-3 border rounded p-0">
                                 <div class="bg-secondary rounded">
-                                <p class="h5 fw-bold p-2 text-white">Status Booking</p>
+                                    <p class="h5 fw-bold p-2 text-white">Status Booking</p>
                                 </div>
-                                <div class="ps-3 mb-3">
-                                    <p class="mt-3">Nama Pembooking : <strong> ${eventData.nama_pic} </strong></p>
-                                    <p>Organisasi :<strong> ${eventData.organisasi} </strong> </p>
-                                    <p>Visitor :<strong> ${eventData.visitor} </strong> </p>
-                                    <p>Tanggal :<strong> ${eventData.tanggal} </strong> </p>
-                                    <p>Jam Mulai :<strong> ${eventData.jam_mulai} </strong> </p>
-                                    <p>Jam Selesai :<strong> ${eventData.jam_selesai} </strong> </p>
-                                    <p>Status : <button class="btn btn-secondary"> ${eventData.status} </button>  </p>
+                                <div class="p-3">
+                                    <table class="table table-bordered table-striped mb-0">
+                                        <tbody>
+                                            <tr>
+                                                <th>Nama Pembooking</th>
+                                                <td>${eventData.nama_pic}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Organisasi</th>
+                                                <td>${eventData.organisasi}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Visitor</th>
+                                                <td>${eventData.visitor}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tanggal</th>
+                                                <td>${eventData.tanggal}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Jam Mulai</th>
+                                                <td>${eventData.jam_mulai}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Jam Selesai</th>
+                                                <td>${eventData.jam_selesai}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Status</th>
+                                                <td><button class="btn btn-secondary">${eventData.status}</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                                 <hr>
                                 <div class="cekStatus text-center p-3">
                                     <p class="fw-bold">Periksa Status Booking ini lebih lanjut dengan menghubungi nomer Admin berikut :</p>
-                                    <a href="https://wa.me/6285868144268" class="btn btn-primary"><i class="fa-brands fa-whatsapp"></i> 08734348343 </a>
+                                    <a href="https://wa.me/6285868144268?text=${encodedMessage}" target="_blank" class="btn btn-primary">
+                                        <i class="fa-brands fa-whatsapp"></i> 085868144268
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -673,5 +786,6 @@
             }
         });
     </script>
+    
 
 @endsection

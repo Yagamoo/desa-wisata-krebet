@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\KasExport;
 use App\Models\Booking;
 use App\Models\Keuangan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
@@ -71,10 +73,21 @@ class LaporanController extends Controller
      */
     public function show(string $id)
     {
-        $keuangans = Keuangan::with('booking')->where('booking_id', $id)->get();
-        $booking = $keuangans->first()?->booking;
-        // dd($keuangan);
-        return view('keuangan.laporan.show', compact('keuangans', 'booking'));
+        $booking = Booking::with('keuangan')->find($id);
+
+        $keuangans = Keuangan::with('booking')
+            ->where('booking_id', $booking->id)
+            ->get();
+
+        $pemasukans = $keuangans->where('jenis', 'pemasukan');
+        $pengeluarans = $keuangans->where('jenis', 'pengeluaran');
+
+        $totalPemasukan = $pemasukans->where('status', 'approved')->sum('jumlah');
+        $totalPengeluaran = $pengeluarans->where('status', 'approved')->sum('jumlah');
+        $sisa = $totalPemasukan - $totalPengeluaran;
+        // dd($sisa);
+
+        return view('keuangan.laporan.show', compact('pemasukans', 'pengeluarans', 'booking', 'totalPemasukan', 'totalPengeluaran', 'sisa'));
     }
 
     /**
@@ -100,4 +113,42 @@ class LaporanController extends Controller
     {
         //
     }
+
+    public function approve(Request $request, $id)
+    {
+        $keuangan = Keuangan::findOrFail($id);
+        $keuangan->status = 'approved';
+        $keuangan->save();
+
+        return response()->json(['message' => 'Laporan berhasil disetujui!']);
+    }
+
+    
+public function reject($id)
+{
+    $keuangan = Keuangan::findOrFail($id);
+    $keuangan->status = 'rejected';
+    $keuangan->save();
+
+    return response()->json(['message' => 'Laporan berhasil ditolak!']);
+}
+
+public function exportExcel($id)
+{
+    $booking = Booking::with('keuangan')->find($id);
+
+    $keuangans = Keuangan::with('booking')
+            ->where('booking_id', $booking->id)
+            ->get();
+
+    $pemasukans = $keuangans->where('jenis', 'pemasukan');
+    $pengeluarans = $keuangans->where('jenis', 'pengeluaran');
+
+    // Format nama file: Kas_Booking-ID_TANGGAL.xlsx
+    $tanggal = now()->format('d-m-Y'); // pastikan $booking->tanggal bertipe Carbon
+    $fileName = "Kas_Booking-{$booking->id}_{$tanggal}.xlsx";
+
+    return Excel::download(new KasExport($pemasukans, $pengeluarans), $fileName);
+}
+
 }

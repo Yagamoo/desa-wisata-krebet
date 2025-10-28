@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Batik;
 use App\Models\Booking;
+use App\Models\BookingItemNego;
 use App\Models\Kesenian;
 use App\Models\CocokTanam;
 use App\Models\Homestay;
@@ -52,7 +53,7 @@ class LandingPageController extends Controller
             $tagihan = (($paket->batik->harga + $paket->kesenian->harga_belajar + $paket->cocokTanam->harga + $paket->permainan->harga + $paket->kuliner->harga) * $request->visitor) + $paket->homestay->harga + $paket->study_banding->harga;
         }
 
-        Booking::create([
+        $booking = Booking::create([
             'nama_pic' => $request->nama_pic,
             'organisasi' => $request->organisasi,
             'noTelpPIC' => $request->notelppic,
@@ -65,6 +66,29 @@ class LandingPageController extends Controller
             'guide_id' => '1',
             'status' => 'Belum ACC',
         ]);
+
+        // === Simpan ke booking_item_negos ===
+        $items = [
+            ['jenis' => 'batik', 'item_id' => $paket->batik_id, 'harga' => $paket->batik->harga],
+            ['jenis' => 'kesenian', 'item_id' => $paket->kesenian_id, 'harga' => $ketKesenian == 'pementasan' ? $paket->kesenian->harga_pementasan : $paket->kesenian->harga_belajar],
+            ['jenis' => 'study_banding', 'item_id' => $paket->study_banding_id, 'harga' => $paket->study_banding    ->harga],
+            ['jenis' => 'cocok_tanam', 'item_id' => $paket->cocok_tanam_id, 'harga' => $paket->cocokTanam->harga],
+            ['jenis' => 'permainan', 'item_id' => $paket->permainan_id, 'harga' => $paket->permainan->harga],
+            ['jenis' => 'homestay', 'item_id' => $paket->homestay_id, 'harga' => $paket->homestay->harga],
+            ['jenis' => 'kuliner', 'item_id' => $paket->kuliner_id, 'harga' => $paket->kuliner->harga],
+        ];
+
+        foreach ($items as $item) {
+            BookingItemNego::create([
+                'booking_id' => $booking->id,
+                'jenis' => $item['jenis'],
+                'item_id' => $item['item_id'],  
+                'harga_awal' => $item['harga'],
+                'harga_nego' => null,
+                'jumlah_visitor' => $booking->visitor,
+                'catatan' => null,
+            ]);
+        }
 
         return redirect()->route('user.landingpage');
     }
@@ -104,7 +128,7 @@ class LandingPageController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => array('target' => '081946988634', 'message' => $message),
+            CURLOPT_POSTFIELDS => array('target' => $no_telp, 'message' => $message),
             CURLOPT_HTTPHEADER => array(
                 'Authorization: ' . $token
             ),

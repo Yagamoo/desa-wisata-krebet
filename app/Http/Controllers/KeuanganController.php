@@ -18,14 +18,16 @@ class KeuanganController extends Controller
         $pemasukanChart = [];
         $pengeluaranChart = [];
 
-        // Data yang digunakan untuk total pemasukan & pengeluaran sesuai filter
-        $filteredData = $data;
+        // Helper date untuk sekarang
+        $now = Carbon::now();
+
+        // Default filtered data (nanti disesuaikan)
+        $filteredData = collect();
 
         switch ($filter) {
             case 'tahunan':
-                $grouped = $data->groupBy(function ($item) {
-                    return Carbon::parse($item->tanggal)->format('Y');
-                });
+                // Group per tahun
+                $grouped = $data->groupBy(fn($item) => Carbon::parse($item->tanggal)->format('Y'));
 
                 foreach ($grouped as $year => $items) {
                     $labels[] = $year;
@@ -33,15 +35,22 @@ class KeuanganController extends Controller
                     $pengeluaranChart[] = $items->where('jenis', 'pengeluaran')->sum('jumlah');
                 }
 
-                $filteredData = $data->filter(function ($item) {
-                    return Carbon::parse($item->tanggal)->year === now()->year;
-                });
+                // Filter hanya tahun berjalan
+                $filteredData = $data->filter(fn($item) => Carbon::parse($item->tanggal)->year === $now->year);
                 break;
 
             case 'bulanan':
                 $grouped = $data->groupBy(function ($item) {
                     return Carbon::parse($item->tanggal)->format('Y-m');
                 });
+
+                // Ambil data bulan sekarang
+                $currentMonth = now()->format('Y-m');
+
+                // Kalau bulan sekarang belum ada di data, tambahkan dengan nilai 0
+                if (!isset($grouped[$currentMonth])) {
+                    $grouped[$currentMonth] = collect();
+                }
 
                 foreach ($grouped as $ym => $items) {
                     $labels[] = Carbon::parse($ym . '-01')->translatedFormat('F Y');
@@ -53,28 +62,28 @@ class KeuanganController extends Controller
                     $tanggal = Carbon::parse($item->tanggal);
                     return $tanggal->year === now()->year && $tanggal->month === now()->month;
                 });
+
                 break;
 
+
             case 'mingguan':
-                $grouped = $data->groupBy(function ($item) {
-                    return Carbon::parse($item->tanggal)->startOfWeek()->format('Y-m-d');
-                });
+                // Group per minggu (startOfWeek)
+                $grouped = $data->groupBy(fn($item) => Carbon::parse($item->tanggal)->startOfWeek()->format('Y-m-d'));
 
                 foreach ($grouped as $weekStart => $items) {
-                    $labels[] = 'Minggu ' . Carbon::parse($weekStart)->translatedFormat('d M Y');
+                    $labels[] = 'Minggu ' . Carbon::parse($weekStart)->translatedFormat('d M');
                     $pemasukanChart[] = $items->where('jenis', 'pemasukan')->sum('jumlah');
                     $pengeluaranChart[] = $items->where('jenis', 'pengeluaran')->sum('jumlah');
                 }
 
-                $filteredData = $data->filter(function ($item) {
-                    return Carbon::parse($item->tanggal)->isSameWeek(now());
-                });
+                // Filter hanya minggu ini
+                $filteredData = $data->filter(fn($item) => Carbon::parse($item->tanggal)->isSameWeek($now));
                 break;
 
-            default: // harian
-                $grouped = $data->groupBy(function ($item) {
-                    return Carbon::parse($item->tanggal)->format('Y-m-d');
-                });
+            case 'harian':
+            default:
+                // Group per hari
+                $grouped = $data->groupBy(fn($item) => Carbon::parse($item->tanggal)->format('Y-m-d'));
 
                 foreach ($grouped as $date => $items) {
                     $labels[] = Carbon::parse($date)->translatedFormat('d M Y');
@@ -82,13 +91,12 @@ class KeuanganController extends Controller
                     $pengeluaranChart[] = $items->where('jenis', 'pengeluaran')->sum('jumlah');
                 }
 
-                $filteredData = $data->filter(function ($item) {
-                    return Carbon::parse($item->tanggal)->isSameDay(now());
-                });
+                // Filter hanya hari ini
+                $filteredData = $data->filter(fn($item) => Carbon::parse($item->tanggal)->isSameDay($now));
                 break;
         }
 
-        // Total berdasarkan data yang terfilter
+        // Total berdasarkan filter yang sedang aktif
         $pemasukan = $filteredData->where('jenis', 'pemasukan')->sum('jumlah');
         $pengeluaran = $filteredData->where('jenis', 'pengeluaran')->sum('jumlah');
 

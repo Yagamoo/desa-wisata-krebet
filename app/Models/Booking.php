@@ -35,6 +35,10 @@ class Booking extends Model
     {
         return $this->hasMany(Keuangan::class, 'booking_id');
     }
+    public function nego()
+    {
+        return $this->hasMany(BookingItemNego::class, 'booking_id');
+    }
 
     public function getLatestStatusKeuanganAttribute()
     {

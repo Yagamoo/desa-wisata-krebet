@@ -111,84 +111,67 @@
                 </tr>
             </thead>
             <tbody>
-                @php
-                $no = 1;
-                @endphp
-                @if ($data->paket->batik->nama != "Tidak Pesan")
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $data->paket->batik->nama }}</td>
-                    <td>{{ $data->visitor }}</td>
-                    <td>Rp. {{ number_format($data->paket->batik->harga, 0, ',', '.') }}</td>
-                    <td>Rp. {{ number_format($data->paket->batik->harga * $data->visitor, 0, ',', '.') }}</td>
-                </tr>
-                @endif
-                @if ($data->paket->kesenian->nama != "Tidak Pesan")
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $data->paket->kesenian->nama }}</td>
-                    <td>{{ $data->visitor }}</td>
-                    <td>Rp. {{ number_format($tagihanKesenian, 0, ',', '.') }}</td>
-                    <td>Rp. {{ number_format($tagihanKesenian * $data->visitor, 0, ',', '.') }}</td>
-                </tr>
-                @endif
-                @if ($data->paket->cocokTanam->nama != "Tidak Pesan")
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $data->paket->cocokTanam->nama }}</td>
-                    <td>{{ $data->visitor }}</td>
-                    <td>Rp. {{ number_format($data->paket->cocokTanam->harga, 0, ',', '.') }}</td>
-                    <td>Rp. {{ number_format($data->paket->cocokTanam->harga * $data->visitor, 0, ',', '.') }}</td>
-                </tr>
-                @endif
-                @if ($data->paket->permainan->nama != "Tidak Pesan")
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $data->paket->permainan->nama }}</td>
-                    <td>{{ $data->visitor }}</td>
-                    <td>Rp. {{ number_format($data->paket->permainan->harga, 0, ',', '.') }}</td>
-                    <td>Rp. {{ number_format($data->paket->permainan->harga * $data->visitor, 0, ',', '.') }}</td>
-                </tr>
-                @endif
-                @if ($data->paket->kuliner->nama != "Tidak Pesan")
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $data->paket->kuliner->nama }}</td>
-                    <td>{{ $data->visitor }}</td>
-                    <td>Rp. {{ number_format($data->paket->kuliner->harga, 0, ',', '.') }}</td>
-                    <td>Rp. {{ number_format($data->paket->kuliner->harga * $data->visitor, 0, ',', '.') }}</td>
-                </tr>
-                @endif
-                @if ($data->paket->homestay->nama != "Tidak Pesan")
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $data->paket->homestay->nama }}</td>
-                    <td>{{ $data->visitor }}</td>
-                    <td>Rp. {{ number_format($data->paket->homestay->harga, 0, ',', '.') }}</td>
-                    <td>Rp. {{ number_format($data->paket->homestay->harga * $data->visitor, 0, ',', '.') }}</td>
-                </tr>
-                @endif
-                @if ($data->paket->study_banding->nama != "Tidak Pesan")
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $data->paket->study_banding->nama }}</td>
-                    <td>{{ $data->visitor }}</td>
-                    <td>Rp. {{ number_format($data->paket->study_banding->harga, 0, ',', '.') }}</td>
-                    <td>Rp. {{ number_format($data->paket->study_banding->harga * $data->visitor, 0, ',', '.') }}</td>
-                </tr>
-                @endif
+                @php $no = 1; @endphp
+    @foreach ($bookingItems as $item)
+        @php
+            $relation = $item->jenis === 'cocok_tanam' ? 'cocokTanam' : $item->jenis;
+            $harga = $item->harga_nego > 0 ? $item->harga_nego : $item->harga_awal;
+            $subtotal = $harga * ($item->jumlah_visitor ?? 0);
+        @endphp
+
+        @if ($subtotal > 0)
+            <tr>
+                <td>{{ $no++ }}</td>
+                <td>
+                    Paket {{ ucfirst(str_replace('_', ' ', $item->jenis)) }}
+                    @if ($item->jenis === 'kesenian')
+                        <span>({{ $data->paket->ketKesenian }})</span>
+                    @endif
+                    : <strong>{{ $data->paket->{$relation}->nama ?? '-' }}</strong>
+                </td>
+                <td>{{ $item->jumlah_visitor ?? '-' }}</td>
+                <td>Rp {{ number_format($harga, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
+            </tr>
+        @endif
+    @endforeach
 
                 <tr>
                     <td colspan="4" style="text-align: center;">TOTAL</td>
-                    <td>Rp. {{ number_format($data->tagihan, 0, ',', '.') }}</td>
+                    <td style="font-weight: bold">Rp. {{ number_format($data->tagihan, 0, ',', '.') }}</td>
                 </tr>
                 <tr>
                     <td colspan="4" style="text-align: center;">DP</td>
-                    <td></td>
+                    <td style="font-weight: bold">
+                        @php
+                            $dp = $data->keuangan
+                                ->where('jenis', 'pemasukan')
+                                ->where('status', 'approved')
+                                ->where('tipe_pembayaran', 'dp')
+                                ->sum('jumlah');
+                        @endphp
+                        Rp. {{ number_format($dp, 0, ',', '.') }}
+                    </td>
                 </tr>
                 <tr>
+                    <td colspan="4" style="text-align: center;">Lain-lain</td>
+                    <td style="font-weight: bold">
+                        @php
+                            $lain = $data->keuangan
+                                ->where('jenis', 'pemasukan')
+                                ->where('status', 'approved')
+                                ->where('tipe_pembayaran', '!=', 'dp')
+                                ->sum('jumlah');
+                        @endphp
+                        Rp. {{ number_format($lain, 0, ',', '.') }}
+                    </td>
+                </tr>
+                <tr>
+                    @php
+                        $sisa = $data->tagihan - $dp - $lain;
+                    @endphp
                     <td colspan="4" style="text-align: center;">SISA</td>
-                    <td>Rp. {{ number_format($data->tagihan, 0, ',', '.') }}</td>
+                    <td style="font-weight: bold">Rp. {{ number_format($sisa, 0, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>

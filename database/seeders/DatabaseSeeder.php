@@ -20,24 +20,24 @@ class DatabaseSeeder extends Seeder
         $role3 = Role::create(['name' => 'Bendahara Lapangan']);
         
         $user = User::factory()->create([
-            'name' => 'Sekretaris Krebet',
+            'name' => 'Sekretaris',
             'email' => 'sekre@gmail.com',
             'password' => 'admin123',
         ]);
 
         $user2 = User::factory()->create([
-            'name' => 'Bendahara Krebet',
+            'name' => 'Bendahara',
             'email' => 'bendahara@gmail.com',
             'password' => 'admin123',
         ]);
 
         $user3 = User::factory()->create([
-            'name' => 'Bendahara Lapangan',
+            'name' => 'Guide',
             'email' => 'lapangan@gmail.com',
             'password' => 'admin123',
         ]);
         $user4 = User::factory()->create([
-            'name' => 'Bendahara Lapangan 2',
+            'name' => 'Guide 2',
             'email' => 'lapangan2@gmail.com',
             'password' => 'admin123',
         ]);

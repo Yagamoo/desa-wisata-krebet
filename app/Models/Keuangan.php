@@ -19,6 +19,7 @@ class Keuangan extends Model
         'tipe_pembayaran',
         'jumlah',
         'bukti',
+        'status',
     ];
 
     protected $casts = [

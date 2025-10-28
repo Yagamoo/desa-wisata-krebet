@@ -6,187 +6,271 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+     --}}
+    <link href="{{ asset('css/plugins/dataTables/datatables.min.css') }}" rel="stylesheet">
+
+@endsection
+
+@section('breadcrumb')
+    <div class="col-lg-10">
+        <h2>Laporan</h2>
+        <ol class="breadcrumb">
+            {{-- <li class="breadcrumb-item">
+                <a href="index.html">Home</a>
+            </li> --}}
+            <li class="breadcrumb-item active">
+                <strong>Laporan</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2"></div>
 @endsection
 
 @section('menu')
-    <p class="d-flex justify-content-between align-items-center me-3 "><a href="{{ route('admin.keuangan.index') }}"
-            class="text-secondary m-1 ms-3"><i class="bi bi-view-list me-2  ps-1 pe-1 rounded"></i> Dashboard </a></p>
-    <p class="d-flex justify-content-between align-items-center me-3 "><a href="{{ route('admin.keuangan.pemasukan') }}"
-            class="text-secondary fw-bold m-1 ms-3 fw-bold"><i class=" me-2 bi bi-cash  ps-1 pe-1 rounded"></i> Pemasukan
-        </a></p>
-    <p class="d-flex justify-content-between align-items-center me-3 "><a href="{{ route('admin.keuangan.pengeluaran') }}"
-            class="text-secondary m-1 ms-3 fw-bold"><i class=" me-2 bi bi-box-arrow-in-left ps-1 pe-1 rounded"></i>
-            Pengeluaran </a> </p>
-    <p class="btn btn-primary text-light d-flex justify-content-between align-items-center me-3 "><a
-            href="{{ route('admin.laporan.index') }}" class="text-light fw-bold m-1 ms-3 fw-bold"><i
-                class=" me-2 bi bi-journal ps-1 pe-1 rounded"></i> Laporan </a> </p>
+    <li>
+        <a href="{{ route('admin.keuangan.index') }}"><i class="fa fa-th-large"></i>
+            <span class="nav-label">Dashboard</span>
+        </a>
+    </li>
+    <li>
+        <a href="{{ route('admin.keuangan.pemasukan') }}"><i class="fa fa-money"></i>
+            <span class="nav-label">Pemasukan</span></a>
+    </li>
+    <li>
+        <a href="{{ route('admin.keuangan.pengeluaran') }}"><i class="fa fa-sign-out"></i>
+            <span class="nav-label">Pengeluaran</span></a>
+    </li>
+    <li class="active">
+        <a href="{{ route('admin.laporan.index') }}"><i class="fa fa-book"></i>
+            <span class="nav-label">Laporan</span></a>
+    </li>
 @endsection
 
 @section('content')
-    <div class="card p-3 m-3 mt-5">
+    {{-- <div class="card p-3 m-3 mt-5">
         <h5 class="m-0 fw-bold">Laporan Keuangan</h5>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb small m-0 mt-2">
                 <li class="breadcrumb-item small active" aria-current="page">Laporan Keuangan</li>
             </ol>
         </nav>
-    </div>
-
-    <div class="card p-3 m-3">
-        <div class="row mb-3">
-            <form method="GET" action="{{ route('admin.laporan.index') }}">
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <select class="form-select" name="filter" onchange="this.form.submit()">
-                        <option value="harian" {{ request('filter', 'bulanan') == 'harian' ? 'selected' : '' }}>Harian
-                        </option>
-                        <option value="mingguan" {{ request('filter', 'bulanan') == 'mingguan' ? 'selected' : '' }}>Mingguan
-                        </option>
-                        <option value="bulanan" {{ request('filter', 'bulanan') == 'bulanan' ? 'selected' : '' }}>Bulanan
-                        </option>
-                        <option value="tahunan" {{ request('filter', 'bulanan') == 'tahunan' ? 'selected' : '' }}>Tahunan
-                        </option>
-                    </select>
+    </div> --}}
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="ibox">
+                <div class="ibox-title d-flex justify-content-between align-items-center bg-primary">
+                    <h5>Filter</h5>
+                    <div class="ibox-tools">
+                        {{-- <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a> --}}
+                        {{-- 
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="#" class="dropdown-item">Config option 1</a></li>
+                            <li><a href="#" class="dropdown-item">Config option 2</a></li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                        --}}
+                    </div>
                 </div>
-            </form>
+
+                <div class="ibox-content">
+
+                    <form method="GET" action="{{ route('admin.laporan.index') }}">
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <select class="form-control" name="filter" onchange="this.form.submit()">
+                                <option value="harian" {{ request('filter', 'bulanan') == 'harian' ? 'selected' : '' }}>
+                                    Harian
+                                </option>
+                                <option value="mingguan" {{ request('filter', 'bulanan') == 'mingguan' ? 'selected' : '' }}>
+                                    Mingguan
+                                </option>
+                                <option value="bulanan" {{ request('filter', 'bulanan') == 'bulanan' ? 'selected' : '' }}>
+                                    Bulanan
+                                </option>
+                                <option value="tahunan" {{ request('filter', 'bulanan') == 'tahunan' ? 'selected' : '' }}>
+                                    Tahunan
+                                </option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row justify-content-center mb-5 m-3 card p-3 px-1">
-        <div class="card-title m-0 px-4 p-1">
-            <h6 class="fw-bold m-0">Riwayat Transaksi</h6>
-            {{-- <a href="#" style="text-decoration: none;">Lihat Semua</a> --}}
+    {{-- <div class="card p-3 m-3">
+        <div class="row mb-3">
         </div>
-        <div class="col-12 bg-white rounde p-3">
-            {{-- Tabel untuk layar besar --}}
-            <div class="table-responsive d-none d-lg-block">
-                <table id="keuangan-index" class="table table-bordered align-middle small">
-                    <thead class="table-secondary">
-                        <tr>
-                            <th scope="col" style="vertical-align: top">No</th>
-                            <th scope="col">Nama PIC</th>
-                            <th scope="col" style="vertical-align: top">No Telpon</th>
-                            <th scope="col">Nama Organisasi</th>
-                            <th scope="col">Jumlah Visitor</th>
-                            <th scope="col">Tanggal Kunjungan</th>
-                            <th scope="col">Jam Kunjungan</th>
-                            {{-- <th scope="col" style="vertical-align: top">Detail</th> --}}
-                            <th scope="col" style="vertical-align: top">Guide</th>
-                            <th scope="col">Tagihan Kunjungan</th>
-                            <th scope="col" style="vertical-align: top">Status</th>
-                            <th scope="col" style="width:10%; vertical-align: top">Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($filteredData as $booking)
-                            <tr>
-                                <td scope="row" class="pt-3">{{ $loop->iteration }}</td>
-                                <td class="pt-3">{{ $booking->nama_pic }}</td>
-                                <td class="pt-3">{{ $booking->noTelpPIC }}</td>
-                                <td class="pt-3">{{ $booking->organisasi }}</td>
-                                <td class="pt-3">{{ $booking->visitor }}</td>
-                                <td class="pt-3">
-                                    {{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('d F Y') }}</td>
-                                <td class="pt-3">{{ date('H:i', strtotime($booking->jam_mulai)) }} -
-                                    {{ date('H:i', strtotime($booking->jam_selesai)) }}</td>
-                                <td scope="col">{{ $booking->guide->name }}</td>
-                                <td scope="col">Rp {{ number_format($booking->tagihan, 0, ',', '.') }}</td>
-                                <td class="">
+    </div> --}}
+    <div class="row">
+        <div class="col-12">
+            <div class="ibox">
+                <div class="ibox-title d-flex justify-content-between align-items-center bg-primary">
+                    <h5>Riwayat Transaksi</h5>
+                    <div class="ibox-tools">
+                        {{-- <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a> --}}
+                        {{-- 
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="#" class="dropdown-item">Config option 1</a></li>
+                            <li><a href="#" class="dropdown-item">Config option 2</a></li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                        --}}
+                    </div>
+                </div>
+
+                <div class="ibox-content">
+                    {{-- Tabel untuk layar besar --}}
+                    <div class="table-responsive d-none d-lg-block">
+                        <table id="keuangan-index" class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" style="vertical-align: top">No</th>
+                                    <th scope="col">Nama PIC</th>
+                                    <th scope="col">Nama Organisasi</th>
+                                    <th scope="col" style="vertical-align: top">No Telpon</th>
+                                    <th scope="col">Tanggal Kunjungan</th>
+                                    <th scope="col">Jam Kunjungan</th>
+                                    {{-- <th scope="col" style="vertical-align: top">Detail</th> --}}
+                                    <th scope="col">Jumlah Visitor</th>
+                                    <th scope="col" style="vertical-align: top">Guide</th>
+                                    <th scope="col">Tagihan Kunjungan</th>
+                                    {{-- <th scope="col" style="vertical-align: top">Status</th> --}}
+                                    <th scope="col" style="width:10%; vertical-align: top">Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($filteredData as $booking)
+                                    @php
+                                        $isPast = \Carbon\Carbon::parse($booking->tanggal)->isPast();
+                                    @endphp
+                                    <tr>
+                                        <td scope="row" class="pt-3">{{ $loop->iteration }}</td>
+                                        <td class="pt-3">{{ $booking->nama_pic }}</td>
+                                        <td class="pt-3">{{ $booking->organisasi }}</td>
+                                        <td class="pt-3">{{ $booking->noTelpPIC }}</td>
+                                        <td class="pt-3 {{ $isPast ? 'text-danger' : 'text-success' }}">
+                                            {{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('d F Y') }}
+                                        </td>
+                                        <td class="pt-3">{{ date('H:i', strtotime($booking->jam_mulai)) }} -
+                                            {{ date('H:i', strtotime($booking->jam_selesai)) }}</td>
+                                        <td class="pt-3">{{ $booking->visitor }}</td>
+                                        <td scope="col">{{ $booking->guide->name }}</td>
+                                        <td scope="col">Rp {{ number_format($booking->tagihan, 0, ',', '.') }}</td>
+                                        {{-- <td class="">
                                     <span class="badge {{ $booking->latest_status_keuangan?->tipe_pembayaran === 'penuh' ? 'bg-success' : ($booking->latest_status_keuangan?->tipe_pembayaran === 'dp' ? 'bg-warning' : 'bg-secondary') }}">
                                         {{ $booking->latest_status_keuangan?->tipe_pembayaran === 'penuh' ? 'Lunas' : ($booking->latest_status_keuangan?->tipe_pembayaran === 'dp' ? 'Uang Muka' : 'Pelunasan') }}
                                     </span>
-                                </td>
-                                <td scope="col">
-                                    <a href="{{ route('admin.laporan.show', $booking->id) }}"
-                                        style="text-decoration: none; color:rgb(2, 77, 2); font-size:1.5rem;"><i
-                                            class="fa-solid fa-file-invoice"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                                </td> --}}
+                                        <td scope="col">
+                                            <a href="{{ route('admin.laporan.show', $booking->id) }}"
+                                                style="text-decoration: none; color:rgb(2, 77, 2); font-size:1.5rem;"><i
+                                                    class="fa-solid fa-file-invoice"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
 
-            {{-- Card untuk layar kecil dan menengah --}}
-            <div class="d-block d-lg-none">
-                @forelse ($filteredData  as $items)
-                    <div class="card mb-3 shadow-sm" data-keterangan="{{ $items->jenis }}">
-                        <div class="card-body">
-                            <div>
-                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <h6 class="fw-bolder mb-0">{{ $items->organisasi ?? 'Krebet' }}</h6>
-                                    <span class="badge {{ $items->latest_status_keuangan?->tipe_pembayaran === 'penuh' ? 'bg-success' : ($items->latest_status_keuangan?->tipe_pembayaran === 'dp' ? 'bg-warning' : 'bg-secondary') }}">
-                                        {{ $items->latest_status_keuangan?->tipe_pembayaran === 'penuh' ? 'Lunas' : ($items->latest_status_keuangan?->tipe_pembayaran === 'dp' ? 'Uang Muka' : 'Pelunasan') }}
-                                    </span>
+                    {{-- Card untuk layar kecil dan menengah --}}
+                    <div class="d-block d-lg-none">
+                        @forelse ($filteredData  as $items)
+                            <div class="card mb-3 shadow-sm" data-keterangan="{{ $items->jenis }}">
+                                <div class="card-body">
+                                    <div>
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <h6 class="font-weigth-bold mb-0">{{ $items->organisasi ?? 'Krebet' }}</h6>
+                                            <span
+                                                class="badge {{ $items->latest_status_keuangan?->tipe_pembayaran === 'penuh' ? 'bg-success' : ($items->latest_status_keuangan?->tipe_pembayaran === 'dp' ? 'bg-warning' : 'bg-secondary') }}">
+                                                {{ $items->latest_status_keuangan?->tipe_pembayaran === 'penuh' ? 'Lunas' : ($items->latest_status_keuangan?->tipe_pembayaran === 'dp' ? 'Uang Muka' : 'Pelunasan') }}
+                                            </span>
 
-                                </div>
-                                <table class="small">
-                                    <tr>
-                                        <td class="align-top">
-                                            <strong>Tanggal</strong>
-                                        </td>
-                                        <td class="px-2 align-top">:</td>
-                                        <td>{{ \Carbon\Carbon::parse($items->tanggal)->translatedFormat('d F Y') }}</td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-top">
-                                            <strong>Jam Kunjungan</strong>
-                                        </td>
-                                        <td class="px-2 align-top">:</td>
-                                        <td>{{ date('H:i', strtotime($booking->jam_mulai)) }} -
-                                            {{ date('H:i', strtotime($booking->jam_selesai)) }}</td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-top">
-                                            <strong>PIC</strong>
-                                        </td>
-                                        <td class="px-2 align-top">:</td>
-                                        <td>{{ $items->nama_pic ?? 'Admin' }}</td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-top">
-                                            <strong>No Telp</strong>
-                                        </td>
-                                        <td class="px-2 align-top">:</td>
-                                        <td>{{ $items->noTelpPIC ?? 'Admin' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-top">
-                                            <strong>Guide</strong>
-                                        </td>
-                                        <td class="px-2 align-top">:</td>
-                                        <td>{{ $booking->guide->name }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-top">
-                                            <strong>Nominal</strong>
-                                        </td>
-                                        <td class="px-2 align-top">:</td>
-                                        <td>Rp. {{ number_format($items->tagihan, 0, ',', '.') }}</td>
-                                    </tr>
-                                </table>
-                                <div class="d-flex justify-content-end">
-                                    <a href="{{ route('admin.laporan.show', $booking->id) }}" class="btn btn-info text-white"><i
-                                            class="fa-solid fa-file-invoice"></i> Detail</a>
+                                        </div>
+                                        <table class="">
+                                            <tr>
+                                                <td class="align-top">
+                                                    <strong>Tanggal</strong>
+                                                </td>
+                                                <td class="px-2 align-top">:</td>
+                                                <td>{{ \Carbon\Carbon::parse($items->tanggal)->translatedFormat('d F Y') }}
+                                                </td>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="align-top">
+                                                    <strong>Jam Kunjungan</strong>
+                                                </td>
+                                                <td class="px-2 align-top">:</td>
+                                                <td>{{ date('H:i', strtotime($booking->jam_mulai)) }} -
+                                                    {{ date('H:i', strtotime($booking->jam_selesai)) }}</td>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="align-top">
+                                                    <strong>PIC</strong>
+                                                </td>
+                                                <td class="px-2 align-top">:</td>
+                                                <td>{{ $items->nama_pic ?? 'Admin' }}</td>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="align-top">
+                                                    <strong>No Telp</strong>
+                                                </td>
+                                                <td class="px-2 align-top">:</td>
+                                                <td>{{ $items->noTelpPIC ?? 'Admin' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="align-top">
+                                                    <strong>Guide</strong>
+                                                </td>
+                                                <td class="px-2 align-top">:</td>
+                                                <td>{{ $booking->guide->name }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="align-top">
+                                                    <strong>Nominal</strong>
+                                                </td>
+                                                <td class="px-2 align-top">:</td>
+                                                <td>Rp. {{ number_format($items->tagihan, 0, ',', '.') }}</td>
+                                            </tr>
+                                        </table>
+                                        <div class="d-flex justify-content-end">
+                                            <a href="{{ route('admin.laporan.show', $items->id) }}"
+                                                class="btn btn-info text-white"><i class="fa-solid fa-file-invoice"></i>
+                                                Detail</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @empty
+                            <div class="text-center text-muted">
+                                <em>Belum ada data yang ditampilkan.</em>
+                            </div>
+                        @endforelse
                     </div>
-                @empty
-                    <div class="text-center text-muted">
-                        <em>Belum ada data yang ditampilkan.</em>
-                    </div>
-                @endforelse
+                </div>
             </div>
-
         </div>
     </div>
 
-    <div class="row justify-content-center mb-5 mt-4 m-3 gap-3">
+    {{-- <div class="row justify-content-center mb-5 mt-4 m-3 gap-3">
         <div class="col p-3 pt-0 px-1 card">
             <div class="card-title p-3">
                 <h6 class="m-0 fw-bold">Arus Kas</h6>
@@ -204,7 +288,7 @@
             </div>
 
         </div>
-    </div>
+    </div> --}}
 @endsection
 
 @section('menuHp')
@@ -245,9 +329,10 @@
             });
         </script>
     @endif
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
+    {{-- <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script> --}}
+    <script src="{{ asset('js/plugins/dataTables/datatables.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/dataTables/dataTables.bootstrap4.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             const table = $('#keuangan-index').DataTable({
@@ -268,7 +353,36 @@
                         previous: "Sebelumnya"
                     },
                     zeroRecords: "Tidak ada data yang ditemukan",
-                }
+                },
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [{
+                        extend: 'copy',
+                        text: 'Copy'
+                    },
+                    // {
+                    //     extend: 'csv',
+                    //     text: 'CSV'
+                    // },
+                    {
+                        extend: 'excel',
+                        title: 'Data Booking'
+                    },
+                    // {
+                    //     extend: 'pdf',
+                    //     title: 'Data Booking'
+                    // },
+                    // {
+                    //     extend: 'print',
+                    //     text: 'Print',
+                    //     customize: function(win) {
+                    //         $(win.document.body).addClass('white-bg');
+                    //         $(win.document.body).css('font-size', '10px');
+                    //         $(win.document.body).find('table')
+                    //             .addClass('compact')
+                    //             .css('font-size', 'inherit');
+                    //     }
+                    // }
+                ]
             });
 
             // Filter berdasarkan keterangan (kolom ke-8, index ke-8)
