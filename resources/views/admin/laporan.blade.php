@@ -44,6 +44,13 @@
         <a href="{{ route('admin.laporan') }}"><i class="fa fa-book"></i>
             <span class="nav-label">Laporan</span></a>
     </li>
+        <li class="text-white px-4 mt-3">
+        <h4>Manajemen Paket</h4>
+    </li>
+    <li>
+        <a href="{{ route('admin.paket.index') }}"><i class="fa fa-bar-chart-o"></i>
+            <span class="nav-label">Paket</span></a>
+    </li>
 @endsection
 
 @section('content')
@@ -239,16 +246,16 @@
 @endsection
 
 @section('menuHp')
+<div class="col text-center border-end">
+    <a href="{{ route('admin.dashboard') }}" class="text-secondary">
+        <p><i class="fa-solid fa-globe m-0 p-0 pt-2"></i></p>
+        <p>Dashboard</p>
+    </a>
+</div>
     <div class="col text-center border-end">
         <a href="{{ route('admin.kalender') }}" class="text-secondary">
             <p><i class="fa-regular fa-calendar-days m-0 p-0 pt-2"></i></p>
             <p>Kalender</p>
-        </a>
-    </div>
-    <div class="col text-center border-end">
-        <a href="{{ route('admin.dashboard') }}" class="text-secondary">
-            <p><i class="fa-solid fa-globe m-0 p-0 pt-2"></i></p>
-            <p>Dashboard</p>
         </a>
     </div>
     <div class="col text-center ">
@@ -259,8 +266,14 @@
     </div>
     <div class="col text-center rounded-top bg-secondary">
         <a href="{{ route('admin.laporan') }}" class="text-white">
-            <p><i class="bi bi-journal m-0 p-0 pt-2"></i></p>
+            <p><i class="fa-solid fa-file-lines m-0 p-0 pt-2"></i></p>
             <p>Laporan</p>
+        </a>
+    </div>
+    <div class="col text-center">
+        <a href="{{ route('admin.paket.index') }}" class="text-secondary">
+            <p><i class="fa fa-bar-chart-o m-0 p-0 pt-2"></i></p>
+            <p>Paket</p>
         </a>
     </div>
 @endsection

@@ -156,20 +156,20 @@
 @endsection
 
 @section('menuHp')
-    <div class="col text-center border-end">
-        <a href="{{ route('admin.kalender') }}" class="text-secondary">
-            <p><i class="fa-regular fa-calendar-days m-0 p-0 pt-2"></i></p>
-            <p>Kalender</p>
-        </a>
-    </div>
     <div class="col text-center ">
         <a href="{{ route('admin.dashboard') }}" class="text-secondary">
             <p><i class="fa-solid fa-globe m-0 p-0 pt-2"></i></p>
             <p>Dashboard</p>
         </a>
     </div>
-    <div class="col text-center rounded-top bg-secondary">
-        <a href="{{ route('admin.booking') }}" class="text-white">
+    <div class="col text-center border-end">
+        <a href="{{ route('admin.kalender') }}" class="text-secondary">
+            <p><i class="fa-regular fa-calendar-days m-0 p-0 pt-2"></i></p>
+            <p>Kalender</p>
+        </a>
+    </div>
+    <div class="col text-center">
+        <a href="{{ route('admin.booking') }}" class="text-secondary">
             <p><i class="fa-solid fa-house-lock m-0 p-0 pt-2"></i></p>
             <p>Booking</p>
         </a>
@@ -178,6 +178,12 @@
         <a href="{{ route('admin.laporan') }}" class="text-secondary">
             <p><i class="fa-solid fa-file-lines m-0 p-0 pt-2"></i></p>
             <p>Laporan</p>
+        </a>
+    </div>
+    <div class="col text-center rounded-top bg-secondary">
+        <a href="{{ route('admin.paket.index') }}" class="text-white">
+            <p><i class="fa fa-bar-chart-o m-0 p-0 pt-2"></i></p>
+            <p>Paket</p>
         </a>
     </div>
 @endsection
@@ -200,93 +206,93 @@
         });
     </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Simpan nilai awal biar bisa dibandingkan nanti
-    document.querySelectorAll('input, textarea').forEach(input => {
-        if (!input.dataset.original && input.type !== 'file') {
-            input.dataset.original = input.value ?? '';
-        }
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simpan nilai awal biar bisa dibandingkan nanti
+            document.querySelectorAll('input, textarea').forEach(input => {
+                if (!input.dataset.original && input.type !== 'file') {
+                    input.dataset.original = input.value ?? '';
+                }
+            });
 
-    document.querySelectorAll('.btn-save').forEach(button => {
-        button.addEventListener('click', async function() {
-            const section = this.dataset.section;
-            const forms = document.querySelectorAll(`form[action*="${section}"]`);
-            let updatedCount = 0;
+            document.querySelectorAll('.btn-save').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const section = this.dataset.section;
+                    const forms = document.querySelectorAll(`form[action*="${section}"]`);
+                    let updatedCount = 0;
 
-            // 🔹 Ubah tombol jadi loading
-            const originalText = this.innerHTML;
-            this.disabled = true;
-            this.innerHTML = `<i class="fa fa-spinner fa-spin mr-2"></i> Menyimpan...`;
+                    // 🔹 Ubah tombol jadi loading
+                    const originalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = `<i class="fa fa-spinner fa-spin mr-2"></i> Menyimpan...`;
 
-            for (const form of forms) {
-                const inputs = form.querySelectorAll('input, textarea');
-                let hasChange = false;
-                const normalize = str => str.replace(/[.,\s]/g, '').trim();
+                    for (const form of forms) {
+                        const inputs = form.querySelectorAll('input, textarea');
+                        let hasChange = false;
+                        const normalize = str => str.replace(/[.,\s]/g, '').trim();
 
-                inputs.forEach(input => {
-                    // 🔹 Kalau file input, cek apakah user pilih file baru
-                    if (input.type === 'file') {
-                        if (input.files && input.files.length > 0) {
-                            hasChange = true;
+                        inputs.forEach(input => {
+                            // 🔹 Kalau file input, cek apakah user pilih file baru
+                            if (input.type === 'file') {
+                                if (input.files && input.files.length > 0) {
+                                    hasChange = true;
+                                }
+                                return;
+                            }
+
+                            // 🔹 Untuk teks, bandingkan dengan data-original
+                            const original = input.dataset.original ?? '';
+                            const current = input.value ?? '';
+                            if (normalize(original) !== normalize(current)) {
+                                hasChange = true;
+                            }
+                        });
+
+                        if (!hasChange) continue; // skip kalau tidak ada perubahan
+
+                        updatedCount++;
+
+                        const formData = new FormData(form);
+
+                        try {
+                            const response = await fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            });
+
+                            const text = await response.text();
+                            try {
+                                const data = JSON.parse(text);
+                                if (data.success) {
+                                    console.log('✅ ' + data.message);
+                                } else {
+                                    console.error('❌ Gagal:', data);
+                                }
+                            } catch (err) {
+                                console.error('Respons bukan JSON:', text);
+                            }
+                        } catch (error) {
+                            console.error('❌ Error fetch:', error);
                         }
-                        return;
                     }
 
-                    // 🔹 Untuk teks, bandingkan dengan data-original
-                    const original = input.dataset.original ?? '';
-                    const current = input.value ?? '';
-                    if (normalize(original) !== normalize(current)) {
-                        hasChange = true;
+                    // 🔹 Kembalikan tombol seperti semula
+                    this.disabled = false;
+                    this.innerHTML = originalText;
+
+                    if (updatedCount === 0) {
+                        alert('⚠️ Tidak ada perubahan pada data apa pun.');
+                    } else {
+                        alert(`✅ Berhasil menyimpan ${updatedCount} data yang diperbarui.`);
                     }
                 });
-
-                if (!hasChange) continue; // skip kalau tidak ada perubahan
-
-                updatedCount++;
-
-                const formData = new FormData(form);
-
-                try {
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-
-                    const text = await response.text();
-                    try {
-                        const data = JSON.parse(text);
-                        if (data.success) {
-                            console.log('✅ ' + data.message);
-                        } else {
-                            console.error('❌ Gagal:', data);
-                        }
-                    } catch (err) {
-                        console.error('Respons bukan JSON:', text);
-                    }
-                } catch (error) {
-                    console.error('❌ Error fetch:', error);
-                }
-            }
-
-            // 🔹 Kembalikan tombol seperti semula
-            this.disabled = false;
-            this.innerHTML = originalText;
-
-            if (updatedCount === 0) {
-                alert('⚠️ Tidak ada perubahan pada data apa pun.');
-            } else {
-                alert(`✅ Berhasil menyimpan ${updatedCount} data yang diperbarui.`);
-            }
+            });
         });
-    });
-});
-</script>
+    </script>
 
 @endsection

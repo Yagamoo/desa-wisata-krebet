@@ -40,6 +40,13 @@
         <a href="{{ route('admin.laporan') }}"><i class="fa fa-book"></i>
             <span class="nav-label">Laporan</span></a>
     </li>
+        <li class="text-white px-4 mt-3">
+        <h4>Manajemen Paket</h4>
+    </li>
+    <li>
+        <a href="{{ route('admin.paket.index') }}"><i class="fa fa-bar-chart-o"></i>
+            <span class="nav-label">Paket</span></a>
+    </li>
 @endsection
 
 @section('content')

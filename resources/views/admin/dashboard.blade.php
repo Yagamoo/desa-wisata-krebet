@@ -950,6 +950,12 @@
             <p>Laporan</p>
         </a>
     </div>
+    <div class="col text-center">
+        <a href="{{ route('admin.paket.index') }}" class="text-secondary">
+            <p><i class="fa fa-bar-chart-o m-0 p-0 pt-2"></i></p>
+            <p>Paket</p>
+        </a>
+    </div>
 @endsection
 
 @section('scripts')
