@@ -168,6 +168,8 @@
                                                     <label class="form-check-label"
                                                         for="studiBanding{{ $studiBanding->id }}">
                                                         <h5 class="card-header fw-bold">{{ $studiBanding->nama }}</h5>
+                                                        <img src="{{ asset('storage/paket_study_banding/' . $studiBanding->gambar) }}"
+                                                            alt="{{ $studiBanding->nama }}" class="img-fluid rounded">
                                                         <hr>
                                                         <small>Deskripsi:</small>
                                                         <p class="card-text">{{ $studiBanding->deskripsi }}</p>
@@ -214,6 +216,8 @@
                                                         onclick="waktuBatik(0)">
                                                     <label class="form-check-label" for="batik{{ $batik->id }}">
                                                         <h5 class="card-header fw-bold">{{ $batik->nama }}</h5>
+                                                        <img src="{{ asset('storage/paket_batik/' . $batik->gambar) }}"
+                                                            alt="{{ $batik->nama }}" class="img-fluid rounded">
                                                         <hr>
                                                         <small>Souvenir yang didapat:</small>
                                                         <p class="card-text">{{ $batik->deskripsi }}</p>
@@ -263,6 +267,8 @@
                                                         onclick="waktuKesenian(0)">
                                                     <label class="form-check-label" for="kesenian{{ $kesenian->id }}">
                                                         <h5 class="card-header fw-bold">{{ $kesenian->nama }}</h5>
+                                                        <img src="{{ asset('storage/paket_kesenian/' . $kesenian->gambar) }}"
+                                                            alt="{{ $kesenian->nama }}" class="img-fluid rounded">
                                                         <hr>
                                                         <small>Harga:</small>
                                                         <p class="card-text">Rp {{ $kesenian->harga_belajar }}</p>
@@ -284,6 +290,8 @@
                                                         onclick="waktuKesenian(0)">
                                                     <label class="form-check-label" for="kesenian2{{ $kesenian->id }}">
                                                         <h5 class="card-header fw-bold">{{ $kesenian->nama }}</h5>
+                                                        <img src="{{ asset('storage/paket_kesenian/' . $kesenian->gambar) }}"
+                                                            alt="{{ $kesenian->nama }}" class="img-fluid rounded">
                                                         <hr>
                                                         <small>Harga:</small>
                                                         <p class="card-text">Rp {{ $kesenian->harga_pementasan }}</p>
@@ -332,6 +340,8 @@
                                                     <label class="form-check-label"
                                                         for="cocokTanam{{ $cocokTanam->id }}">
                                                         <h5 class="card-header fw-bold">{{ $cocokTanam->nama }}</h5>
+                                                        <img src="{{ asset('storage/paket_cocok_tanam/' . $cocokTanam->gambar) }}"
+                                                            alt="{{ $cocokTanam->nama }}" class="img-fluid rounded">
                                                         <hr>
                                                         <small>Harga:</small>
                                                         <p class="card-text">Rp {{ $cocokTanam->harga }}</p>
@@ -372,6 +382,8 @@
                                                         onclick="waktuPermainan(0)">
                                                     <label class="form-check-label" for="permainan{{ $permainan->id }}">
                                                         <h5 class="card-header fw-bold">{{ $permainan->nama }}</h5>
+                                                        <img src="{{ asset('storage/paket_permainan/' . $permainan->gambar) }}"
+                                                            alt="{{ $permainan->nama }}" class="img-fluid rounded">
                                                         <hr>
                                                         <small>Harga:</small>
                                                         <p class="card-text">Rp {{ $permainan->harga }}</p>
@@ -409,6 +421,8 @@
                                                         onclick="waktuKuliner(0)">
                                                     <label class="form-check-label" for="kuliner{{ $kuliner->id }}">
                                                         <h5 class="card-header fw-bold">{{ $kuliner->nama }}</h5>
+                                                        <img src="{{ asset('storage/paket_kuliner/' . $kuliner->gambar) }}"
+                                                            alt="{{ $kuliner->nama }}" class="img-fluid rounded">
                                                         <hr>
                                                         <small>Deskripsi:</small>
                                                         <p class="card-text">{{ $kuliner->deskripsi }}</p>
@@ -446,6 +460,8 @@
                                                         onclick="waktuHomestay(0)">
                                                     <label class="form-check-label" for="homestay{{ $homestay->id }}">
                                                         <h5 class="card-header fw-bold">{{ $homestay->nama }}</h5>
+                                                        <img src="{{ asset('storage/paket_homestay/' . $homestay->gambar) }}"
+                                                            alt="{{ $homestay->nama }}" class="img-fluid rounded">
                                                         <hr>
                                                         <small>Deskripsi:</small>
                                                         <p class="card-text">{{ $homestay->deskripsi }}</p>
@@ -588,7 +604,7 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.min.js"></script>
     <script type="text/javascript" src="/js/landingpage.js"></script>
     <script src="{{ asset('js/slideForm.js') }}"></script>
-<script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             if (!calendarEl) return;
@@ -719,7 +735,7 @@
 - Jam: ${eventData.jam_mulai} - ${eventData.jam_selesai}
 Mohon konfirmasi status booking saya. Terima kasih!`;
 
-const encodedMessage = encodeURIComponent(message);
+                        const encodedMessage = encodeURIComponent(message);
 
                         // Update the modal's content
                         var modalBody = document.getElementById('modalBody');
@@ -786,6 +802,6 @@ const encodedMessage = encodeURIComponent(message);
             }
         });
     </script>
-    
+
 
 @endsection
