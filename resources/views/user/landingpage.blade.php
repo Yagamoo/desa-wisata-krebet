@@ -28,8 +28,8 @@
             </div>
             <div class="col-lg-10 col-sm-12 mb-4">
                 <section class="pemesanan">
-                    <h2 class="text-center mb-5 rounded py-2">Pemesanan Tanggal</h2>
-                    <div height="20">
+                    <h2 class="text-center mb-5 rounded py-2 shadow">Pemesanan Tanggal</h2>
+                    <div>
                         <div id='calendar'></div>
                     </div>
                 </section>
@@ -654,7 +654,7 @@
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
-                        right: 'timeGridDay,timeGridWeek,dayGridMonth'
+                        right: 'dayGridMonth'
                     },
                     buttonText: {
                         today: 'Hari ini',

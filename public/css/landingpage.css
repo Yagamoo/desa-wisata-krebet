@@ -215,7 +215,7 @@ body {
     transition: var(--transition);
 }
 
-.pemesanan:hover {
+/* .pemesanan:hover {
     box-shadow: var(--card-hover-shadow);
 }
 
@@ -226,10 +226,10 @@ body {
     border-radius: 12px;
     border: 2px solid var(--gray-200);
     box-shadow: var(--card-shadow);
-}
+} */
 
 /* FullCalendar Customization */
-.fc {
+/* .fc {
     border-radius: 15px;
     overflow: hidden;
     border: 1px solid var(--gray-200);
@@ -282,7 +282,7 @@ body {
 .fc-event:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+} */
 
 /* Modal Enhancements */
 .modal-content {
@@ -581,4 +581,81 @@ html {
 }
 .step.active {
     display: block; /* cuma step aktif yg tampil */
+}
+
+/* ============================
+   FULLCALENDAR FIX & OPTIMIZE
+   ============================ */
+
+/* Wrapper kalender */
+#calendar {
+    width: 100% !important;
+    min-height: 600px; /* bebas naik-turun sesuai isi */
+}
+
+/* Hilangkan scroll vertikal bawaan yang bikin jelek */
+.fc-scroller {
+    overflow-y: hidden !important;
+}
+
+/* Biar FC tinggi otomatis */
+.fc {
+    height: auto !important;
+}
+
+/* Rapihin title biar nggak terlalu besar / tumpah */
+.fc-toolbar-title {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+}
+
+/* Biar kotak hari tinggi ideal */
+.fc-daygrid-day-frame {
+    min-height: 80px !important;
+}
+
+/* Biru highlight hari ini */
+.fc-day-today {
+    background: rgba(59, 130, 246, 0.08) !important;
+}
+
+/* Mobile adjust */
+@media (max-width: 768px) {
+    .fc-toolbar-title {
+        font-size: 1.1rem !important;
+    }
+
+    .fc-button {
+        padding: 3px 8px !important;
+        font-size: 0.75rem !important;
+    }
+
+    .fc-col-header-cell,
+    .fc-daygrid-day {
+        min-width: 35px;
+    }
+}
+
+.hero h1 {
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    font-size: 48px;
+    /* color: #1e293b; */
+    margin-bottom: 10px;
+}
+
+.hero h3 {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    /* color: #475569; */
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 32px;
+    }
+    .hero h3 {
+        font-size: 16px;
+    }
 }

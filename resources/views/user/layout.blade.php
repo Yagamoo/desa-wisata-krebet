@@ -24,6 +24,10 @@
     <!-- Bootstrap Timepicker CSS -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="{{ asset('css/landingpage.css') }}">
     {{-- <link rel="stylesheet" href="/css/landingpage.css"> --}}
 
@@ -43,7 +47,8 @@
                 {{-- Sosial Media --}}
                 <ul class="list-unstyled d-flex gap-2 m-0 sosmed">
                     <li class="shadow rounded-pill d-flex align-items-center">
-                        <a href="https://www.facebook.com/profile.php?id=100078985543662&mibextid=kFxxJD" target="_blank"
+                        <a href="https://www.facebook.com/profile.php?id=100078985543662&mibextid=kFxxJD"
+                            target="_blank"
                             class="d-flex align-items-center justify-content-center px-3 py-2 text-dark text-decoration-none">
                             <i class="fa-brands fa-facebook-f"></i>
                         </a>
