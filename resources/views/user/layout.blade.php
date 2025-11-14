@@ -40,7 +40,7 @@
 
             {{-- Logo --}}
             <a class="navbar-brand mb-2 mb-xl-0" href="#">
-                <img src="/asset/Logo_Desa_Krebet.png" alt="Logo Desa Krebet" height="70">
+                <img src="{{ asset('asset/Logo_Desa_Krebet.png') }}" alt="Logo Desa Krebet" height="70">
             </a>
 
             <div class="d-flex ">

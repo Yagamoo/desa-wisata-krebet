@@ -168,8 +168,11 @@
                                                     <label class="form-check-label"
                                                         for="studiBanding{{ $studiBanding->id }}">
                                                         <h5 class="card-header fw-bold">{{ $studiBanding->nama }}</h5>
-                                                        <img src="{{ asset('storage/paket_study_banding/' . $studiBanding->gambar) }}"
+                                                        <img src="{{ asset(
+                                                            $studiBanding->gambar ? 'storage/paket_study_banding/' . $studiBanding->gambar : 'asset/Logo_Desa_Krebet.png',
+                                                        ) }}"
                                                             alt="{{ $studiBanding->nama }}" class="img-fluid rounded">
+
                                                         <hr>
                                                         <small>Deskripsi:</small>
                                                         <p class="card-text">{{ $studiBanding->deskripsi }}</p>
@@ -216,8 +219,9 @@
                                                         onclick="waktuBatik(0)">
                                                     <label class="form-check-label" for="batik{{ $batik->id }}">
                                                         <h5 class="card-header fw-bold">{{ $batik->nama }}</h5>
-                                                        <img src="{{ asset('storage/paket_batik/' . $batik->gambar) }}"
+                                                        <img src="{{ $batik->gambar ? asset('storage/paket_batik/' . $batik->gambar) : asset('asset/Logo_Desa_Krebet.png') }}"
                                                             alt="{{ $batik->nama }}" class="img-fluid rounded">
+
                                                         <hr>
                                                         <small>Souvenir yang didapat:</small>
                                                         <p class="card-text">{{ $batik->deskripsi }}</p>
@@ -267,8 +271,11 @@
                                                         onclick="waktuKesenian(0)">
                                                     <label class="form-check-label" for="kesenian{{ $kesenian->id }}">
                                                         <h5 class="card-header fw-bold">{{ $kesenian->nama }}</h5>
-                                                        <img src="{{ asset('storage/paket_kesenian/' . $kesenian->gambar) }}"
+                                                        <img src="{{ $kesenian->gambar
+                                                            ? asset('storage/paket_kesenian/' . $kesenian->gambar)
+                                                            : asset('asset/Logo_Desa_Krebet.png') }}"
                                                             alt="{{ $kesenian->nama }}" class="img-fluid rounded">
+
                                                         <hr>
                                                         <small>Harga:</small>
                                                         <p class="card-text">Rp {{ $kesenian->harga_belajar }}</p>
@@ -290,8 +297,11 @@
                                                         onclick="waktuKesenian(0)">
                                                     <label class="form-check-label" for="kesenian2{{ $kesenian->id }}">
                                                         <h5 class="card-header fw-bold">{{ $kesenian->nama }}</h5>
-                                                        <img src="{{ asset('storage/paket_kesenian/' . $kesenian->gambar) }}"
+                                                        <img src="{{ $kesenian->gambar
+                                                            ? asset('storage/paket_kesenian/' . $kesenian->gambar)
+                                                            : asset('asset/Logo_Desa_Krebet.png') }}"
                                                             alt="{{ $kesenian->nama }}" class="img-fluid rounded">
+
                                                         <hr>
                                                         <small>Harga:</small>
                                                         <p class="card-text">Rp {{ $kesenian->harga_pementasan }}</p>
@@ -340,8 +350,11 @@
                                                     <label class="form-check-label"
                                                         for="cocokTanam{{ $cocokTanam->id }}">
                                                         <h5 class="card-header fw-bold">{{ $cocokTanam->nama }}</h5>
-                                                        <img src="{{ asset('storage/paket_cocok_tanam/' . $cocokTanam->gambar) }}"
+                                                        <img src="{{ $cocokTanam->gambar
+                                                            ? asset('storage/paket_cocok_tanam/' . $cocokTanam->gambar)
+                                                            : asset('asset/Logo_Desa_Krebet.png') }}"
                                                             alt="{{ $cocokTanam->nama }}" class="img-fluid rounded">
+
                                                         <hr>
                                                         <small>Harga:</small>
                                                         <p class="card-text">Rp {{ $cocokTanam->harga }}</p>
@@ -382,8 +395,11 @@
                                                         onclick="waktuPermainan(0)">
                                                     <label class="form-check-label" for="permainan{{ $permainan->id }}">
                                                         <h5 class="card-header fw-bold">{{ $permainan->nama }}</h5>
-                                                        <img src="{{ asset('storage/paket_permainan/' . $permainan->gambar) }}"
+                                                        <img src="{{ $permainan->gambar
+                                                            ? asset('storage/paket_permainan/' . $permainan->gambar)
+                                                            : asset('asset/Logo_Desa_Krebet.png') }}"
                                                             alt="{{ $permainan->nama }}" class="img-fluid rounded">
+
                                                         <hr>
                                                         <small>Harga:</small>
                                                         <p class="card-text">Rp {{ $permainan->harga }}</p>
@@ -421,8 +437,9 @@
                                                         onclick="waktuKuliner(0)">
                                                     <label class="form-check-label" for="kuliner{{ $kuliner->id }}">
                                                         <h5 class="card-header fw-bold">{{ $kuliner->nama }}</h5>
-                                                        <img src="{{ asset('storage/paket_kuliner/' . $kuliner->gambar) }}"
+                                                        <img src="{{ $kuliner->gambar ? asset('storage/paket_kuliner/' . $kuliner->gambar) : asset('asset/Logo_Desa_Krebet.png') }}"
                                                             alt="{{ $kuliner->nama }}" class="img-fluid rounded">
+
                                                         <hr>
                                                         <small>Deskripsi:</small>
                                                         <p class="card-text">{{ $kuliner->deskripsi }}</p>
@@ -460,8 +477,11 @@
                                                         onclick="waktuHomestay(0)">
                                                     <label class="form-check-label" for="homestay{{ $homestay->id }}">
                                                         <h5 class="card-header fw-bold">{{ $homestay->nama }}</h5>
-                                                        <img src="{{ asset('storage/paket_homestay/' . $homestay->gambar) }}"
+                                                        <img src="{{ $homestay->gambar
+                                                            ? asset('storage/paket_homestay/' . $homestay->gambar)
+                                                            : asset('asset/Logo_Desa_Krebet.png') }}"
                                                             alt="{{ $homestay->nama }}" class="img-fluid rounded">
+
                                                         <hr>
                                                         <small>Deskripsi:</small>
                                                         <p class="card-text">{{ $homestay->deskripsi }}</p>
